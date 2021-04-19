@@ -1,0 +1,806 @@
+{
+	"compiler": {
+		"version": "0.8.3+commit.8d00100c"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "Approval",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "Burn",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "liquidityToken",
+						"type": "address"
+					}
+				],
+				"name": "LiquidityTokenCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "Mint",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipRenounced",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "Transfer",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "DOMAIN_SEPARATOR",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MINIMUM_LIQUIDITY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "PERMIT_TYPEHASH",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "allowance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "approve",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "balanceOf",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "burnLiquidityToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "decimals",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "factory",
+				"outputs": [
+					{
+						"internalType": "contract ICbbcFactory",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getTotalLiabilities",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "totalLiabilities",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken_",
+						"type": "address"
+					},
+					{
+						"internalType": "contract ICbbcFactory",
+						"name": "factory_",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isOwner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "mintLiquidityToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "liquidity",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "name",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "nonces",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "v",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "r",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "s",
+						"type": "bytes32"
+					}
+				],
+				"name": "permit",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "reserve",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "settleToken",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "symbol",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalSupply",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "transfer",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "transferFrom",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "transferSettleToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "updateAfterReceive",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "updateAfterWithdraw",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"initialize(address)": {
+					"details": "The Ownable constructor sets the original `owner` of the contract to the sender account."
+				},
+				"isOwner()": {
+					"returns": {
+						"_0": "true if `msg.sender` is the owner of the contract."
+					}
+				},
+				"owner()": {
+					"returns": {
+						"_0": "the address of the owner."
+					}
+				},
+				"renounceOwnership()": {
+					"details": "Allows the current owner to relinquish control of the contract."
+				},
+				"transferOwnership(address)": {
+					"details": "Allows the current owner to transfer control of the contract to a newOwner.",
+					"params": {
+						"newOwner": "The address to transfer ownership to."
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"renounceOwnership()": {
+					"notice": "Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/CbbcLiquidityToken.sol": "CbbcLiquidityToken"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/CbbcERC20.sol": {
+			"keccak256": "0xc983a4dba821fca18fcf57ec4be0c651869c9046e24c9d5710c5ad9e2291ab8a",
+			"urls": [
+				"bzz-raw://70e72a3fb1830936585fb9b283b366887e86d04bbd379fdd9b9b893fff637785",
+				"dweb:/ipfs/Qmav8vht1j5ZGu3uEqLMTVpsVEbQ2gXpP2GdnnJsrKdqMT"
+			]
+		},
+		"contracts/CbbcLiquidityToken.sol": {
+			"keccak256": "0xcf2d7b5921ac8096f0c117bbb1fc6e65d774dab57ddc212d7d843cc2025b2fa1",
+			"urls": [
+				"bzz-raw://ed46a038178f556968c5d7206e464eb25ac9ab2c96647ba1f59f52f2d41f2797",
+				"dweb:/ipfs/QmcBm5KZo6PENXckedq1ohL7JSZzZPvMBU3ZsmoEogT1oZ"
+			]
+		},
+		"contracts/interfaces/ICbbcCallee.sol": {
+			"keccak256": "0xba0d667906024977112f7bf323d900f435c7b0c9cd589a87db2560d9d6c09b6b",
+			"urls": [
+				"bzz-raw://d31bd51ff5210bc6bb215994e13ca16ee97e70c6959789191c99d50769c8eb96",
+				"dweb:/ipfs/QmVGpAcWiYAMoDWZu3G6K9gQZ7rJtd7eeGMi82WEomy7vu"
+			]
+		},
+		"contracts/interfaces/ICbbcERC20.sol": {
+			"keccak256": "0x15886141cdf6b0cbfb96a410c40fea18d9d0271069724165a71d5a1b26af4f1e",
+			"urls": [
+				"bzz-raw://701ef6456a5dc697e80495c347386a2410e0e8164fd8e7464140620d2e3e9f1d",
+				"dweb:/ipfs/QmakcGFZ7wmN9HYwGKiCaeXU6KnACJDndsPsQVn7yEV5L3"
+			]
+		},
+		"contracts/interfaces/ICbbcFactory.sol": {
+			"keccak256": "0xddf89263d34e695db22a5cba4239bb5841e82c059058abd07b333cb878f2c4e3",
+			"urls": [
+				"bzz-raw://4fe850a830fd47c80f16567d7a8f8e258d8131aed77fb1375245cb7e0848727d",
+				"dweb:/ipfs/QmUhGBrtHhKjvHbm1CNe2PAUjcKBDindT849SbFCH9DQwY"
+			]
+		},
+		"contracts/interfaces/ICbbcLiquidityToken.sol": {
+			"keccak256": "0xa72ee34a5de465738ccc30363c9b3edb6716877493ff004bdf41c58b53d1b8c1",
+			"urls": [
+				"bzz-raw://1287e43be196caf22e383a1e96d6be30ee8b1a43ca7b78e2e0b65645dd9972e1",
+				"dweb:/ipfs/QmVmzoUB9TaJT9jBegD8fQgin89X4dHjtMmH7J2jXEXBcE"
+			]
+		},
+		"contracts/interfaces/ICbbcRebasePolicy.sol": {
+			"keccak256": "0x681691b27c254d991cecc36881a7e85bc53aa7f60faed0affd767f66d4cdd69d",
+			"urls": [
+				"bzz-raw://a9b77efbc7d35f40545e0196974fbdd0ebea9da1dc4c4cd50abb8119793729bd",
+				"dweb:/ipfs/QmQxoKRantzq39RJxS4ndG32M5mwkvXX3dm68HoiR8GJ1d"
+			]
+		},
+		"contracts/interfaces/ICbbcToken.sol": {
+			"keccak256": "0x3ed222972240492b7d0e135239f8aa7804917dba99d3b79d65aec393a1419ccd",
+			"urls": [
+				"bzz-raw://8da971865835b76d0caf3762e89df9ff25220acf5e53fa5ae97aa30f2f9274ea",
+				"dweb:/ipfs/QmeFCN45fGs2F7BW9W9wKudAMq8tQdf6vZ6p6ptTwbsFgj"
+			]
+		},
+		"contracts/interfaces/IERC20.sol": {
+			"keccak256": "0xa1c273c6fdb21a0595554ab9ba141bebb7c4056a032919c4f7a5f48263e24c07",
+			"urls": [
+				"bzz-raw://fcebcb676e48273ce57f9dc3aae4e6a2166657a13a0ad79f7a3ab166c9be9a66",
+				"dweb:/ipfs/QmPBrdRkRaK9APwzBJ21tyL3Mq3FVses4i4JXCoDix3vn2"
+			]
+		},
+		"contracts/interfaces/IMarketOracle.sol": {
+			"keccak256": "0x5f69a69f5a679a97534d2c0c13e5587078040bd1be04d0ca76f06f6a9cddd810",
+			"urls": [
+				"bzz-raw://71296220cee7e984a9a81e9b74a2b071e19254039d4a5cd7762d4d138cbf267b",
+				"dweb:/ipfs/QmXZ6ogaYKmUXF5BwVYF1bAhvkVsoH6V7Mj3aVwsd6yuYC"
+			]
+		},
+		"contracts/libraries/CbbcLibrary.sol": {
+			"keccak256": "0x3f41b1c4cd7a09abd0ca96d6756d2da07827a3e522f50298502d16b6a7e107fc",
+			"urls": [
+				"bzz-raw://eae1e03cd218f071ba3a0efac72026ec656862c161bf650dfa47f83f60c5ffde",
+				"dweb:/ipfs/QmXpgtcgBazKMabUMEEff39Vemo7xJpFnkcNzhTNwm9y5F"
+			]
+		},
+		"contracts/libraries/ERC20Detailed.sol": {
+			"keccak256": "0x87cb1166de206073b867f5414cb9bf23e290b8e506524f900abb34adcddd9db7",
+			"urls": [
+				"bzz-raw://3256a67ca8bcd016b62b981e281a19ffcd3217e36b6baaccf9e6d5abb8a1ab1d",
+				"dweb:/ipfs/QmR9MYmzEQpmiiSXDXtTJ5RpCZ1UKzM7PU2TF6h8RQ4ym5"
+			]
+		},
+		"contracts/libraries/Initializable.sol": {
+			"keccak256": "0xc4d7b514aaf67c4164f22e3915f794a84f440bf51cc69fe18f9b38c64c0db54d",
+			"urls": [
+				"bzz-raw://6f0b38a155cd43cb556b1c082ed57ac5241b8bf13dc9c063f0f1bc5993a734b9",
+				"dweb:/ipfs/QmWELzPmyDbNw3hqyWaChikup3n8Gu4iDSLfWNn7BagSLz"
+			]
+		},
+		"contracts/libraries/Math.sol": {
+			"keccak256": "0x433eca0a04b209be65c690707d1407816449a37e74ead4a495d76cd7685830a6",
+			"urls": [
+				"bzz-raw://569997a720861d3a92dbd16af7fc4d28eac5de7bc771a69e66114287d5b78529",
+				"dweb:/ipfs/Qmez2JLtS1X44vzEsB2pusaeKPFEhCXpVNG7LFLxJmxPFt"
+			]
+		},
+		"contracts/libraries/Ownable.sol": {
+			"keccak256": "0x7f4152498f3405dfcf6bebf506a0bf63c5c10eff783288a867863c8f1387d0c0",
+			"urls": [
+				"bzz-raw://cb3d0269229c000ab1fba9bc90c63ead275a73ac34c70821d5f967841dd0563c",
+				"dweb:/ipfs/QmTEsbfScrrStSXwDxBzuxpijoNHAEdaKVJdemzwUmJifr"
+			]
+		},
+		"contracts/libraries/SafeMathInt.sol": {
+			"keccak256": "0x6ddfef08966af4e650b53fe6f0fcc4f4ebe3f8765657b6454fe3b8a7f5347183",
+			"urls": [
+				"bzz-raw://c0f62b46bad69c65ef3e63280f1fc92a32a3539226b635d17341d8fc1797160f",
+				"dweb:/ipfs/QmUMduM89RY4K2qc16GEKiXuAzCuK7QV13auEd7hGm3Pzn"
+			]
+		}
+	},
+	"version": 1
+}

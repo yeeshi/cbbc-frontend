@@ -1,0 +1,592 @@
+{
+	"compiler": {
+		"version": "0.8.3+commit.8d00100c"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "LogSetBidAskSpreadOracle",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "LogSetDailyPriceVolatilityOracle",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "LogSetDailyVolumeOracle",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "LogSetInterestRateOracle",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "LogSetPriceOracle",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipRenounced",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "bidAskSpreadMedianOracles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "dailyPriceVolatilityMedianOracles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "dailyVolumeMedianOracles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getBidAskSpread",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "baSpread",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getDailyPriceVolatility",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "sigma",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getDailyVolume",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "volume",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getInterestRate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "iRate",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getPrice",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "blockNumber",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "interestRateMedianOracles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isOwner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "priceMedianOracles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "setBidAskSpreadOracle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "setDailyPriceVolatilityOracle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "setDailyVolumeOracle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "setInterestRateOracle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "oracle",
+						"type": "address"
+					}
+				],
+				"name": "setPriceOracle",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"initialize(address)": {
+					"details": "The Ownable constructor sets the original `owner` of the contract to the sender account."
+				},
+				"isOwner()": {
+					"returns": {
+						"_0": "true if `msg.sender` is the owner of the contract."
+					}
+				},
+				"owner()": {
+					"returns": {
+						"_0": "the address of the owner."
+					}
+				},
+				"renounceOwnership()": {
+					"details": "Allows the current owner to relinquish control of the contract."
+				},
+				"transferOwnership(address)": {
+					"details": "Allows the current owner to transfer control of the contract to a newOwner.",
+					"params": {
+						"newOwner": "The address to transfer ownership to."
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"renounceOwnership()": {
+					"notice": "Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MarketOracle.sol": "MarketOracle"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/MarketOracle.sol": {
+			"keccak256": "0x563e86094c83cc3507e3598c764ba124c3d5c7fe645d924c8720701769c2701c",
+			"urls": [
+				"bzz-raw://787629ccab2997ee5f202f808cbf383bdaffe8c2b0e88eb361a56d04d8fdbcda",
+				"dweb:/ipfs/QmVqy1k1Qyt778sCgyeBneCz6uWHXTDMw2vTNt946Y5LG3"
+			]
+		},
+		"contracts/MedianOracle.sol": {
+			"keccak256": "0x51071a96e4b9448e86795ae332ef9056e0a2b1329f9d2da095cda93f353334c8",
+			"urls": [
+				"bzz-raw://93567960054bbcb31bf131a9f9f8d590c91a84ef4a59e6024cbc0279b8119479",
+				"dweb:/ipfs/QmbH7YRfBc2U6Ug4N48xkai83Qrgs1MLYmch7jJZRTh5kR"
+			]
+		},
+		"contracts/interfaces/IMarketOracle.sol": {
+			"keccak256": "0x104fb05bf2702eaffb2d3308c13e1c59b27be0f331994c6959b8222ffb591ef1",
+			"urls": [
+				"bzz-raw://83b55b2f54ef03142ade1e4b1bb227286ed9e63f0f2b3cfdae295892e1ee751b",
+				"dweb:/ipfs/QmXVkyuNyAcLSgb1CS53rY4v5WaRBumizBzj1mZDcLxf1R"
+			]
+		},
+		"contracts/interfaces/IMedianOracle.sol": {
+			"keccak256": "0x1f7c4fb0324c851a6264cc1f9b80ed88b3fbff29a3949f31f2757e01d0d0743a",
+			"urls": [
+				"bzz-raw://fa022c2ba857f49419c7139e40365f73ce7d4cec11b8307c5765a8182a3cb89b",
+				"dweb:/ipfs/Qmb5oC8FMxBFwdhQWE9fiFbKn96ichnPmqCiK6fupXqAZa"
+			]
+		},
+		"contracts/libraries/Initializable.sol": {
+			"keccak256": "0xc4d7b514aaf67c4164f22e3915f794a84f440bf51cc69fe18f9b38c64c0db54d",
+			"urls": [
+				"bzz-raw://6f0b38a155cd43cb556b1c082ed57ac5241b8bf13dc9c063f0f1bc5993a734b9",
+				"dweb:/ipfs/QmWELzPmyDbNw3hqyWaChikup3n8Gu4iDSLfWNn7BagSLz"
+			]
+		},
+		"contracts/libraries/Ownable.sol": {
+			"keccak256": "0x7f4152498f3405dfcf6bebf506a0bf63c5c10eff783288a867863c8f1387d0c0",
+			"urls": [
+				"bzz-raw://cb3d0269229c000ab1fba9bc90c63ead275a73ac34c70821d5f967841dd0563c",
+				"dweb:/ipfs/QmTEsbfScrrStSXwDxBzuxpijoNHAEdaKVJdemzwUmJifr"
+			]
+		},
+		"contracts/libraries/Select.sol": {
+			"keccak256": "0x004f6ff64274464b0d0f34def420818b4eec0de25a508a3aa6c3fa126a14b90f",
+			"urls": [
+				"bzz-raw://45c1d694375b5da583b1926f792f042feb49eca7cef3f34609add98c3a3e70a9",
+				"dweb:/ipfs/QmUXrSsfaaBywf73tVzsXZBGRMWC6QDt871LSLcknqK6UJ"
+			]
+		},
+		"contracts/libraries/WhiteList.sol": {
+			"keccak256": "0x3e33f8afabb69a82549bd0392f3e65959498ce84de8fb200815d96c295bd13d5",
+			"urls": [
+				"bzz-raw://ece282bf59f4abbf06e7b10dde88e1e83bb700186dcdf3167356fd2cda88e9db",
+				"dweb:/ipfs/QmRzGx8k2idSYab7HVEpffAJ1BWDuK4gEdzyGuX1Ubj5AG"
+			]
+		}
+	},
+	"version": 1
+}

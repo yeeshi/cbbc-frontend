@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 
 /// 注册监听token方法
@@ -25,10 +25,10 @@ Vue.prototype.resetSetItem = function (key, newVal) {
       }
       return storage.setItem(key, newVal);
   }
-}
+};
 
 new Vue({
   router,
   vuetify,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');

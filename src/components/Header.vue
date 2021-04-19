@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import helper from "../helpers"
 
 export default {
   name: 'Header',
@@ -150,6 +151,7 @@ export default {
       handleUnlock() {
         this.isLogin = true
         this.overlay = false
+        helper.connectWallet();
       },
       /// 钱包
       handleShowLayer() {

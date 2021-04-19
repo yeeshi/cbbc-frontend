@@ -1,0 +1,556 @@
+{
+	"compiler": {
+		"version": "0.8.3+commit.8d00100c"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "reportExpirationTimeSec_",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reportDelaySec_",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minimumProviders_",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipRenounced",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "provider",
+						"type": "address"
+					}
+				],
+				"name": "ProviderAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "provider",
+						"type": "address"
+					}
+				],
+				"name": "ProviderRemoved",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "provider",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "payload",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "ProviderReportPushed",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "provider",
+						"type": "address"
+					}
+				],
+				"name": "addProvider",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getData",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isOwner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minimumProviders",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "providerReports",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "blockNumber",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "payload",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "providers",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "providersSize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "purgeReports",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "payload",
+						"type": "uint256"
+					}
+				],
+				"name": "pushReport",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "provider",
+						"type": "address"
+					}
+				],
+				"name": "removeProvider",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "reportDelaySec",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "reportExpirationTimeSec",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "minimumProviders_",
+						"type": "uint256"
+					}
+				],
+				"name": "setMinimumProviders",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "reportDelaySec_",
+						"type": "uint256"
+					}
+				],
+				"name": "setReportDelaySec",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "reportExpirationTimeSec_",
+						"type": "uint256"
+					}
+				],
+				"name": "setReportExpirationTimeSec",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"addProvider(address)": {
+					"params": {
+						"provider": "Address of the provider."
+					}
+				},
+				"constructor": {
+					"params": {
+						"minimumProviders_": "The minimum number of providers with valid                          reports to consider the aggregate report valid.",
+						"reportDelaySec_": "The number of seconds since reporting that has to                        pass before a report is usable",
+						"reportExpirationTimeSec_": "The number of seconds after which the                                 report is deemed expired."
+					}
+				},
+				"getData()": {
+					"returns": {
+						"_0": "AggregatedValue: Median of providers reported values.         valid: Boolean indicating an aggregated value was computed successfully."
+					}
+				},
+				"initialize(address)": {
+					"details": "The Ownable constructor sets the original `owner` of the contract to the sender account."
+				},
+				"isOwner()": {
+					"returns": {
+						"_0": "true if `msg.sender` is the owner of the contract."
+					}
+				},
+				"owner()": {
+					"returns": {
+						"_0": "the address of the owner."
+					}
+				},
+				"providersSize()": {
+					"returns": {
+						"_0": "The number of authorized providers."
+					}
+				},
+				"pushReport(uint256)": {
+					"params": {
+						"payload": "is expected to be 18 decimal fixed point number."
+					}
+				},
+				"removeProvider(address)": {
+					"params": {
+						"provider": "Address of the provider."
+					}
+				},
+				"renounceOwnership()": {
+					"details": "Allows the current owner to relinquish control of the contract."
+				},
+				"setMinimumProviders(uint256)": {
+					"params": {
+						"minimumProviders_": "The new minimum number of providers."
+					}
+				},
+				"setReportDelaySec(uint256)": {
+					"params": {
+						"reportDelaySec_": "The new delay period in seconds."
+					}
+				},
+				"setReportExpirationTimeSec(uint256)": {
+					"params": {
+						"reportExpirationTimeSec_": "The number of seconds after which the        report is deemed expired."
+					}
+				},
+				"transferOwnership(address)": {
+					"details": "Allows the current owner to transfer control of the contract to a newOwner.",
+					"params": {
+						"newOwner": "The address to transfer ownership to."
+					}
+				}
+			},
+			"title": "Median Oracle",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"addProvider(address)": {
+					"notice": "Authorizes a provider."
+				},
+				"getData()": {
+					"notice": "Computes median of provider reports whose timestamps are in the         valid timestamp range."
+				},
+				"purgeReports()": {
+					"notice": "Invalidates the reports of the calling provider."
+				},
+				"pushReport(uint256)": {
+					"notice": "Pushes a report for the calling provider."
+				},
+				"removeProvider(address)": {
+					"notice": "Revokes provider authorization."
+				},
+				"renounceOwnership()": {
+					"notice": "Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore."
+				},
+				"setMinimumProviders(uint256)": {
+					"notice": "Sets the minimum number of providers with valid reports to         consider the aggregate report valid."
+				},
+				"setReportDelaySec(uint256)": {
+					"notice": "Sets the time period since reporting that has to pass before a         report is usable."
+				},
+				"setReportExpirationTimeSec(uint256)": {
+					"notice": "Sets the report expiration period."
+				}
+			},
+			"notice": "Provides a value onchain that's aggregated from a whitelisted set of         providers.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MedianOracle.sol": "MedianOracle"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/MedianOracle.sol": {
+			"keccak256": "0x51071a96e4b9448e86795ae332ef9056e0a2b1329f9d2da095cda93f353334c8",
+			"urls": [
+				"bzz-raw://93567960054bbcb31bf131a9f9f8d590c91a84ef4a59e6024cbc0279b8119479",
+				"dweb:/ipfs/QmbH7YRfBc2U6Ug4N48xkai83Qrgs1MLYmch7jJZRTh5kR"
+			]
+		},
+		"contracts/interfaces/IMedianOracle.sol": {
+			"keccak256": "0x1f7c4fb0324c851a6264cc1f9b80ed88b3fbff29a3949f31f2757e01d0d0743a",
+			"urls": [
+				"bzz-raw://fa022c2ba857f49419c7139e40365f73ce7d4cec11b8307c5765a8182a3cb89b",
+				"dweb:/ipfs/Qmb5oC8FMxBFwdhQWE9fiFbKn96ichnPmqCiK6fupXqAZa"
+			]
+		},
+		"contracts/libraries/Initializable.sol": {
+			"keccak256": "0xc4d7b514aaf67c4164f22e3915f794a84f440bf51cc69fe18f9b38c64c0db54d",
+			"urls": [
+				"bzz-raw://6f0b38a155cd43cb556b1c082ed57ac5241b8bf13dc9c063f0f1bc5993a734b9",
+				"dweb:/ipfs/QmWELzPmyDbNw3hqyWaChikup3n8Gu4iDSLfWNn7BagSLz"
+			]
+		},
+		"contracts/libraries/Ownable.sol": {
+			"keccak256": "0x7f4152498f3405dfcf6bebf506a0bf63c5c10eff783288a867863c8f1387d0c0",
+			"urls": [
+				"bzz-raw://cb3d0269229c000ab1fba9bc90c63ead275a73ac34c70821d5f967841dd0563c",
+				"dweb:/ipfs/QmTEsbfScrrStSXwDxBzuxpijoNHAEdaKVJdemzwUmJifr"
+			]
+		},
+		"contracts/libraries/Select.sol": {
+			"keccak256": "0x004f6ff64274464b0d0f34def420818b4eec0de25a508a3aa6c3fa126a14b90f",
+			"urls": [
+				"bzz-raw://45c1d694375b5da583b1926f792f042feb49eca7cef3f34609add98c3a3e70a9",
+				"dweb:/ipfs/QmUXrSsfaaBywf73tVzsXZBGRMWC6QDt871LSLcknqK6UJ"
+			]
+		},
+		"contracts/libraries/WhiteList.sol": {
+			"keccak256": "0x3e33f8afabb69a82549bd0392f3e65959498ce84de8fb200815d96c295bd13d5",
+			"urls": [
+				"bzz-raw://ece282bf59f4abbf06e7b10dde88e1e83bb700186dcdf3167356fd2cda88e9db",
+				"dweb:/ipfs/QmRzGx8k2idSYab7HVEpffAJ1BWDuK4gEdzyGuX1Ubj5AG"
+			]
+		}
+	},
+	"version": 1
+}

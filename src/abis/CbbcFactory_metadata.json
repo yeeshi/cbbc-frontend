@@ -1,0 +1,1077 @@
+{
+	"compiler": {
+		"version": "0.8.3+commit.8d00100c"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					}
+				],
+				"name": "AddAllowedLeverage",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "symbol",
+						"type": "string"
+					}
+				],
+				"name": "AddAllowedToken",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tradeToken",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "cbbc",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					},
+					{
+						"indexed": false,
+						"internalType": "enum ICbbcToken.CbbcType",
+						"name": "cbbcType",
+						"type": "uint8"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "CbbcCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "liquidityToken",
+						"type": "address"
+					}
+				],
+				"name": "LiquidityTokenCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipRenounced",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					}
+				],
+				"name": "RemoveAllowedLeverage",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "RemoveAllowedToken",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					}
+				],
+				"name": "addLeverage",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "addAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "symbol",
+						"type": "string"
+					}
+				],
+				"name": "addSettleToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "addAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "symbol",
+						"type": "string"
+					}
+				],
+				"name": "addTradeToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allCbbcs",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allCbbcsForOneSettleToken",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken_",
+						"type": "address"
+					}
+				],
+				"name": "allCbbcsForSettleToken",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "allCbbcsLength",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken_",
+						"type": "address"
+					}
+				],
+				"name": "allCbbcsLengthForSettleToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "allowedLeveragSize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allowedLeverages",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "allowedSettleTokenSize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allowedSettleTokens",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "allowedTradeTokenSize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "allowedTradeTokens",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "alpha_buy",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "alpha_sell",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllowedLeverageList",
+				"outputs": [
+					{
+						"internalType": "uint8[]",
+						"name": "",
+						"type": "uint8[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllowedSettleTokenList",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllowedTradeTokenList",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum ICbbcToken.CbbcType",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"name": "getCbbc",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "getLiquidityToken",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					}
+				],
+				"name": "getSettleTokenSymbol",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner_",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					}
+				],
+				"name": "isAllowedLeverage",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tmpAddress",
+						"type": "address"
+					}
+				],
+				"name": "isAllowedSettleToken",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tmpAddress",
+						"type": "address"
+					}
+				],
+				"name": "isAllowedTradeToken",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isOwner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					}
+				],
+				"name": "removeLeverage",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "removeAddress",
+						"type": "address"
+					}
+				],
+				"name": "removeSettleToken",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "removeAddress",
+						"type": "address"
+					}
+				],
+				"name": "removeTradeToken",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "alpha_buy_",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "alpha_sell_",
+						"type": "uint256"
+					}
+				],
+				"name": "setAlpha",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "tradeToken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint8",
+						"name": "leverage",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum ICbbcToken.CbbcType",
+						"name": "cbbcType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "cbbcToken",
+						"type": "address"
+					}
+				],
+				"name": "setCbbcToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "liquidityToken",
+						"type": "address"
+					}
+				],
+				"name": "setLiquidityToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "settleTokenSymbols",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "settleToken",
+						"type": "address"
+					}
+				],
+				"name": "totalLiabilitiesInCbbcForSettleToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "tradeTokenSymbols",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"addLeverage(uint8)": {
+					"details": "Implementation of add an allowed address into the allowed leverage whitelist.",
+					"params": {
+						"leverage": "new allowed leverage, an uint8."
+					}
+				},
+				"addSettleToken(address,string)": {
+					"details": "Implementation of add an allowed address into the whitelist.",
+					"params": {
+						"addAddress": "new allowed settlement token.",
+						"symbol": "symbol of the new settlement token."
+					}
+				},
+				"addTradeToken(address,string)": {
+					"details": "Implementation of add an allowed address into the allowed trade token whitelist.",
+					"params": {
+						"addAddress": "new allowed trade token.",
+						"symbol": "symbol of the new trade token."
+					}
+				},
+				"allCbbcsForSettleToken(address)": {
+					"params": {
+						"settleToken_": "address of the settlement token"
+					},
+					"returns": {
+						"_0": "all CBBCs based on settlement token"
+					}
+				},
+				"allCbbcsLength()": {
+					"returns": {
+						"_0": "the number of all CBBCs in the factory"
+					}
+				},
+				"allCbbcsLengthForSettleToken(address)": {
+					"params": {
+						"settleToken_": "address of the settlement token"
+					},
+					"returns": {
+						"_0": "the number of all CBBCs based on settlement token"
+					}
+				},
+				"allowedLeveragSize()": {
+					"returns": {
+						"_0": "The number of allowed settlement tokens."
+					}
+				},
+				"allowedSettleTokenSize()": {
+					"returns": {
+						"_0": "The number of allowed settlement tokens."
+					}
+				},
+				"allowedTradeTokenSize()": {
+					"returns": {
+						"_0": "The number of allowed settlement tokens."
+					}
+				},
+				"getAllowedLeverageList()": {
+					"details": "Implementation of getting the allowed leverage whitelist."
+				},
+				"getAllowedSettleTokenList()": {
+					"details": "Implementation of getting the allowed settlement token whitelist."
+				},
+				"getAllowedTradeTokenList()": {
+					"details": "Implementation of getting the allowed trade token whitelist."
+				},
+				"getSettleTokenSymbol(address)": {
+					"details": "Implementation of getting the symbol for an allowed settlement token.",
+					"params": {
+						"settleToken": "settlement token address"
+					}
+				},
+				"isAllowedLeverage(uint8)": {
+					"details": "Implementation of testing whether the input uint8 is an allowed leverage.",
+					"params": {
+						"leverage": "input leverage for testing."
+					}
+				},
+				"isAllowedSettleToken(address)": {
+					"details": "Implementation of testing whether the input address is an allowed settlement token.",
+					"params": {
+						"tmpAddress": "input address for testing."
+					}
+				},
+				"isAllowedTradeToken(address)": {
+					"details": "Implementation of testing whether the input address is an allowed trade token.",
+					"params": {
+						"tmpAddress": "input address for testing."
+					}
+				},
+				"isOwner()": {
+					"returns": {
+						"_0": "true if `msg.sender` is the owner of the contract."
+					}
+				},
+				"owner()": {
+					"returns": {
+						"_0": "the address of the owner."
+					}
+				},
+				"removeLeverage(uint8)": {
+					"details": "Implementation of revoke an invalid address from the leverage whitelist.",
+					"params": {
+						"leverage": "revoked leverage."
+					}
+				},
+				"removeSettleToken(address)": {
+					"details": "Implementation of revoke an invalid address from the whitelist.",
+					"params": {
+						"removeAddress": "revoked address."
+					}
+				},
+				"removeTradeToken(address)": {
+					"details": "Implementation of revoke an invalid address from the trade token whitelist.",
+					"params": {
+						"removeAddress": "revoked address."
+					}
+				},
+				"renounceOwnership()": {
+					"details": "Allows the current owner to relinquish control of the contract."
+				},
+				"setAlpha(uint256,uint256)": {
+					"details": "Implementation of setting or changing alpha"
+				},
+				"setLiquidityToken(address,address)": {
+					"details": "Implementation of add an liquidityToken address.",
+					"params": {
+						"liquidityToken": "address of the new liquidity token.",
+						"settleToken": "address of settlement token."
+					}
+				},
+				"totalLiabilitiesInCbbcForSettleToken(address)": {
+					"params": {
+						"settleToken": "the settlement token address"
+					},
+					"returns": {
+						"_0": "total liabilities of all CBBC for one particular settlement token."
+					}
+				},
+				"transferOwnership(address)": {
+					"details": "Allows the current owner to transfer control of the contract to a newOwner.",
+					"params": {
+						"newOwner": "The address to transfer ownership to."
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"renounceOwnership()": {
+					"notice": "Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/CbbcFactory.sol": "CbbcFactory"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/CbbcFactory.sol": {
+			"keccak256": "0xde3e2697d66b45ee88ab739eb5bfcbd5bfc6076a6216805d50a81085f0598b3f",
+			"urls": [
+				"bzz-raw://0e466b075e5d196b57a270bbd3ed1f151de5ddaea2c469c0eb3cf3e671bf708f",
+				"dweb:/ipfs/QmSeqEKdTTUSUhuk5XHCvMbNfQsPJCRYbECYW4Jq3d763P"
+			]
+		},
+		"contracts/interfaces/ICbbcFactory.sol": {
+			"keccak256": "0xddf89263d34e695db22a5cba4239bb5841e82c059058abd07b333cb878f2c4e3",
+			"urls": [
+				"bzz-raw://4fe850a830fd47c80f16567d7a8f8e258d8131aed77fb1375245cb7e0848727d",
+				"dweb:/ipfs/QmUhGBrtHhKjvHbm1CNe2PAUjcKBDindT849SbFCH9DQwY"
+			]
+		},
+		"contracts/interfaces/ICbbcRebasePolicy.sol": {
+			"keccak256": "0x681691b27c254d991cecc36881a7e85bc53aa7f60faed0affd767f66d4cdd69d",
+			"urls": [
+				"bzz-raw://a9b77efbc7d35f40545e0196974fbdd0ebea9da1dc4c4cd50abb8119793729bd",
+				"dweb:/ipfs/QmQxoKRantzq39RJxS4ndG32M5mwkvXX3dm68HoiR8GJ1d"
+			]
+		},
+		"contracts/interfaces/ICbbcToken.sol": {
+			"keccak256": "0x3ed222972240492b7d0e135239f8aa7804917dba99d3b79d65aec393a1419ccd",
+			"urls": [
+				"bzz-raw://8da971865835b76d0caf3762e89df9ff25220acf5e53fa5ae97aa30f2f9274ea",
+				"dweb:/ipfs/QmeFCN45fGs2F7BW9W9wKudAMq8tQdf6vZ6p6ptTwbsFgj"
+			]
+		},
+		"contracts/interfaces/IERC20.sol": {
+			"keccak256": "0xa1c273c6fdb21a0595554ab9ba141bebb7c4056a032919c4f7a5f48263e24c07",
+			"urls": [
+				"bzz-raw://fcebcb676e48273ce57f9dc3aae4e6a2166657a13a0ad79f7a3ab166c9be9a66",
+				"dweb:/ipfs/QmPBrdRkRaK9APwzBJ21tyL3Mq3FVses4i4JXCoDix3vn2"
+			]
+		},
+		"contracts/interfaces/IMarketOracle.sol": {
+			"keccak256": "0x5f69a69f5a679a97534d2c0c13e5587078040bd1be04d0ca76f06f6a9cddd810",
+			"urls": [
+				"bzz-raw://71296220cee7e984a9a81e9b74a2b071e19254039d4a5cd7762d4d138cbf267b",
+				"dweb:/ipfs/QmXZ6ogaYKmUXF5BwVYF1bAhvkVsoH6V7Mj3aVwsd6yuYC"
+			]
+		},
+		"contracts/libraries/Initializable.sol": {
+			"keccak256": "0xc4d7b514aaf67c4164f22e3915f794a84f440bf51cc69fe18f9b38c64c0db54d",
+			"urls": [
+				"bzz-raw://6f0b38a155cd43cb556b1c082ed57ac5241b8bf13dc9c063f0f1bc5993a734b9",
+				"dweb:/ipfs/QmWELzPmyDbNw3hqyWaChikup3n8Gu4iDSLfWNn7BagSLz"
+			]
+		},
+		"contracts/libraries/Ownable.sol": {
+			"keccak256": "0x7f4152498f3405dfcf6bebf506a0bf63c5c10eff783288a867863c8f1387d0c0",
+			"urls": [
+				"bzz-raw://cb3d0269229c000ab1fba9bc90c63ead275a73ac34c70821d5f967841dd0563c",
+				"dweb:/ipfs/QmTEsbfScrrStSXwDxBzuxpijoNHAEdaKVJdemzwUmJifr"
+			]
+		},
+		"contracts/libraries/WhiteList.sol": {
+			"keccak256": "0x3e33f8afabb69a82549bd0392f3e65959498ce84de8fb200815d96c295bd13d5",
+			"urls": [
+				"bzz-raw://ece282bf59f4abbf06e7b10dde88e1e83bb700186dcdf3167356fd2cda88e9db",
+				"dweb:/ipfs/QmRzGx8k2idSYab7HVEpffAJ1BWDuK4gEdzyGuX1Ubj5AG"
+			]
+		}
+	},
+	"version": 1
+}
