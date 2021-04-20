@@ -3,7 +3,6 @@ import Web3 from 'web3'
 import cbbcFactory from './abis/CbbcFactory.json'
 import cbbcLiquidityToken from './abis/CbbcLiquidityToken.json'
 import cbbcRouter from './abis/CbbcRouter.json'
-import abi from 'ethereumjs-abi'
 
 const cbbcFactoryAddress = "0xa3B21B4e4a6CC5dF7f32a998610E0684bFf44289";
 const tradeTokenAddress = "0x1749eB4fa5650ef0575f0aC195e7f41d9465ec5A";
