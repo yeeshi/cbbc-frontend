@@ -16,24 +16,18 @@ let tradeTokenInstance = new web3.eth.Contract(cbbcLiquidityToken.abi, tradeToke
 let settleTokenInstance = new web3.eth.Contract(cbbcLiquidityToken.abi, settleTokenAdress);
 let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 
-//拿到所有标的
+
 (async () => {
     let cbbcAddresses = [];
     const cbbcLength = await cbbcFactoryInstance.methods.allCbbcsLength().call();
-    for(let i=0;i<cbbcLength;i++) {
-        cbbcAddresses.push(await cbbcFactoryInstance.methods.allCbbcs(i).call())
+    for(let i=0;i<cbbcLength;i++) {  //拿持仓
+        cbbcAddresses.push(await cbbcFactoryInstance.methods.allCbbcs(i).call())  
     }
 
-    // const tradeTokenAddresses = await cbbcFactoryInstance.methods.getAllowedTradeTokenList().call();
-    // const settleTokenAddresses = await cbbcFactoryInstance.methods.getAllowedSettleTokenList().call();
+    //拿所有标的名
     console.log(await settleTokenInstance.methods.name().call());
     
-    packPrice().then(function(result){
-        cbbcRouterInstance.methods.buyCbbcETH(result, tradeTokenAddress, 0, 0, BigInt(0.01 * Math.pow(10, 18)).toString(), "0xfFCDC69320928d609F656a335a1598592F039592", 0).call();
-    });
-
-    
-    // await cbbcRouterInstance.methods.buyCbbcETH(lastPrice, tradeTokenAddress, 0, 0, web3.utils.toBN('1'), "0xfFCDC69320928d609F656a335a1598592F039592", 0).call();
+    // cbbcRouterInstance.methods.buyCbbcETH(lastPrice, tradeTokenAddress, 0, 0, web3.utils.toBN('1'), "0xfFCDC69320928d609F656a335a1598592F039592", 0).call();
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
@@ -44,30 +38,6 @@ async function handleAccountsChanged(accounts) {
     } else if (accounts[0] !== web3.eth.defaultAccount) {
         web3.eth.defaultAccount = accounts[0];
     }
-}
-
-async function packPrice() {
-    const nonce = 0;
-    const settlePrice = BigInt(1 * Math.pow(10, 18));
-    const tradePrice = BigInt(11 * Math.pow(10, 18));
-    let parameterTypes = ["address", "address", "uint256", "uint256", "uint256", "address"];
-    let parameterValues = [settleTokenAdress, tradeTokenAddress, settlePrice.toString(), tradePrice.toString(), nonce, cbbcRouterAddress];
-    let hash = "0x" + abi.soliditySHA3(parameterTypes, parameterValues).toString("hex");
-    let signature = '';
-    const provider = await detectEthereumProvider();
-    await ethereum
-    .request({ method: 'eth_requestAccounts' })
-    .then(function(val){
-        handleAccountsChanged(val);
-        signature =web3.eth.sign(hash, web3.eth.defaultAccount);
-    });
-    
-    return {
-        settlePrice: settlePrice,
-        tradePrice: tradePrice,
-        nonce: nonce,
-        signature: signature
-    };
 }
 
 

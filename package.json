@@ -10,7 +10,6 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
     "core-js": "^3.6.5",
-    "ethereumjs-abi": "^0.6.8",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",
