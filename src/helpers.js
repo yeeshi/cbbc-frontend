@@ -1,18 +1,20 @@
 import detectEthereumProvider from '@metamask/detect-provider'
 import Web3 from 'web3'
 import cbbcFactory from './abis/CbbcFactory.json'
-import cbbcLiquidityToken from './abis/CbbcLiquidityToken.json'
+import cbbcToken from './abis/CbbcToken.json'
 import cbbcRouter from './abis/CbbcRouter.json'
+import axios from 'axios'
 
-const cbbcFactoryAddress = "0xa3B21B4e4a6CC5dF7f32a998610E0684bFf44289";
+const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
 const tradeTokenAddress = "0x1749eB4fa5650ef0575f0aC195e7f41d9465ec5A";
 const settleTokenAdress = "0x3193d3e6392338919D16278Ec9f2846371591d6d";
-const cbbcRouterAddress = "0x5DB5A86aa9A2eD77bb23C50DBCf3e43afD02bE64";
+const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
+const cbbcTokenAddress = "0xC09EF3F3E8B196368A4C503B6e327D967098eF1F";
 
 let web3 = new Web3(Web3.givenProvider);
 let cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
-let tradeTokenInstance = new web3.eth.Contract(cbbcLiquidityToken.abi, tradeTokenAddress);
-let settleTokenInstance = new web3.eth.Contract(cbbcLiquidityToken.abi, settleTokenAdress);
+let tradeTokenInstance = new web3.eth.Contract(cbbcToken.abi, tradeTokenAddress);
+let settleTokenInstance = new web3.eth.Contract(cbbcToken.abi, settleTokenAdress);
 let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 
 
@@ -23,10 +25,26 @@ let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress
         cbbcAddresses.push(await cbbcFactoryInstance.methods.allCbbcs(i).call())  
     }
 
-    //拿所有标的名
-    console.log(await settleTokenInstance.methods.name().call());
+    // 拿所有标的名字
+    // console.log(await settleTokenInstance.methods.name().call());
     
-    // cbbcRouterInstance.methods.buyCbbcETH(lastPrice, tradeTokenAddress, 0, 0, web3.utils.toBN('1'), "0xfFCDC69320928d609F656a335a1598592F039592", 0).call();
+    axios.get("http://localhost:8000/pricedata")
+    .then(function(response) {
+        if(response.status == 200) {
+            let priceData = response.data;
+            console.log(priceData);
+            cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAdress, tradeTokenAddress, 10, 1, "1000000000000000000", "0xCDC15F917788E0cB7BB125F222B6124Fd8a6ef4C", "1819976221")
+                .send({from: '0xCDC15F917788E0cB7BB125F222B6124Fd8a6ef4C'}, async function(error, transactionHash){
+                    if(error) {
+                        console.log("has error");
+                        console.log(error);
+                    }
+                    console.log(transactionHash);
+                });
+        }
+        else
+            console.error(response.status);
+    });
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
@@ -41,6 +59,7 @@ async function handleAccountsChanged(accounts) {
 
 
 export default {
+    cbbcRouterInstance: cbbcRouterInstance,
     async connectWallet() { //连接用户钱包
         const provider = await detectEthereumProvider();
 

@@ -81,7 +81,7 @@
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
-                  v-model="input1Add"
+                  v-model="inputAddETH"
                 ></v-text-field>
               </div>
             </v-container>
@@ -90,14 +90,14 @@
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
-                  v-model="input2Add"
+                  v-model="inputAddUSD"
                 ></v-text-field>
               </div>
             </v-container>
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供10份流动性</p></div>
             </v-container>
-            <v-btn block @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -114,14 +114,14 @@
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
-                  v-model="input2Clear"
+                  v-model="inputRemove"
                 ></v-text-field>
                 <v-subheader class="pl-0 pr-0" style="padding-bottom: 23px;">
                   <v-btn color="#FF6871" @click="handleMax"><span class="white--text">最大</span></v-btn>
                 </v-subheader>
               </div>
             </v-container>
-            <v-btn block @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block @click="handleClearConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -130,6 +130,20 @@
 </template>
 <script>
 import vFooter from '@/components/Footer.vue'
+import helpers from '../helpers'
+
+let self = this;
+
+function liquidityChange() {  //TODO:potential bug: when cancel without confirm, the value is still there
+  if(self.inputRemove != '') {
+    console.log(self.inputRemove);
+  } else if(self.inputAddETH != '') {
+    console.log(self.inputAddETH);
+  } else if(self.inputAddUSD = '') {
+    console.log(self.inputAddUSD);
+  }
+}
+
 export default {
   name: 'Tab3',
   components: {
@@ -144,9 +158,9 @@ export default {
       ],
       isAddSHow: false,
       isClearShow: false,
-      input1Add: '',
-      input2Add: '',
-      input2Clear: ''
+      inputAddETH: '',
+      inputAddUSD: '',
+      inputRemove: ''
     }
   },
   mounted () {
@@ -167,20 +181,33 @@ export default {
       this.isAddSHow = true
     },
     handleMax() {
-      this.input2Clear = 10
+      this.inputRemove = 10
     },
     /// 清除流动
     handleClear() {
       this.isClearShow = true
     },
     /// 弹窗确认
-    handleConfirm() {
+    handleAddConfirm() {
       this.isAddSHow = false
       this.isClearShow = false
-      this.input2Clear = ''
-      this.input1Add = ''
-      this.input2Add = ''
-    }
+      
+      liquidityChange(this.inputAddETH?this.inputAddETH:this.intputAddUSD)
+      
+      this.inputRemove = ''
+      this.inputAddETH = ''
+      this.inputAddUSD = ''
+    },
+    handleClearConfirm() {
+      this.isAddSHow = false
+      this.isClearShow = false
+      
+      liquidityChange(this.inputRemove)
+      
+      this.inputRemove = ''
+      this.inputAddETH = ''
+      this.inputAddUSD = ''
+    },
   },
   beforeDestroy () {
     if (typeof window === 'undefined') return
