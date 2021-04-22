@@ -132,17 +132,6 @@
 import vFooter from '@/components/Footer.vue'
 import helpers from '../helpers'
 
-let self = this;
-
-function liquidityChange() {  //TODO:potential bug: when cancel without confirm, the value is still there
-  if(self.inputRemove != '') {
-    console.log(self.inputRemove);
-  } else if(self.inputAddETH != '') {
-    console.log(self.inputAddETH);
-  } else if(self.inputAddUSD = '') {
-    console.log(self.inputAddUSD);
-  }
-}
 
 export default {
   name: 'Tab3',
