@@ -40,10 +40,14 @@ function getDeadline() {
     return (Math.floor(Date.now() / 1000) + 1800).toString();
 }
 
+function toWei(amount) {
+    return (amount * Math.pow(10, 18)).toString();
+}
+
 //string amount, string ownerAddress, function callback
 async function approveToken(amount, ownerAddress) { 
     //TODO: should be able to choose the settle token type
-    settleTokenInstance.methods.approve(cbbcRouterAddress, amount).send({from:ownerAddress}, async function(error, transactionHash){
+    settleTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         return {
             error: error,
             transactionHash: transactionHash
@@ -57,7 +61,7 @@ async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, 
     .then(function(response) {
         if(response.status == 200) {
             let priceData = response.data;
-                cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, getDeadline())
+                cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     return {
                         error: error,
