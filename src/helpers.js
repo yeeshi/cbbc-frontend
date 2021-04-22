@@ -12,8 +12,6 @@ const priceDataServer = "http://localhost:8000/pricedata";
 
 let web3 = new Web3(Web3.givenProvider);
 let cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
-let tradeTokenInstance = new web3.eth.Contract(cbbcToken.abi, tradeTokenAddress);
-let settleTokenInstance = new web3.eth.Contract(cbbcToken.abi, settleTokenAdress);
 let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 
 const settleTokenList = getSettleTokenList();
@@ -53,13 +51,13 @@ async function approveToken(amount, ownerAddress) {
     });
 }
 
-//string amount, string ownerAddress, function callback
-async function buyCbbc(settleTokenAddr, tradeTokenAddr, amount, ownerAddress, callback) {
+//string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress
+async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress) {
     axios.get(priceDataServer)
     .then(function(response) {
         if(response.status == 200) {
             let priceData = response.data;
-                cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, 10, 1, amount, ownerAddress, getDeadline())
+                cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     return {
                         error: error,
