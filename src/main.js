@@ -1,8 +1,16 @@
 import Vue from 'vue'
+import Vuex from 'vuex';
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
-
+Vue.use(Vuex)
+var store = new Vuex.Store({
+  state: {
+    defaultAccount:"",
+    defaultChainId:1,
+    login : false,
+  }
+})
 Vue.config.productionTip = false;
 
 

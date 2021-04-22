@@ -27,6 +27,11 @@ const tradeTokenList = getTradeTokenList();
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
+ethereum.on('chainChanged', handleChainChanged);
+async function handleChainChanged(id) {
+    console.log(id);
+    
+}
 
 async function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
@@ -111,7 +116,7 @@ async function getTokenList(addresses) {
 
 
 //连接用户钱包
-async function connectWallet() { 
+async function connectWallet(accountHandler,chainIdHandler) { 
     const provider = await detectEthereumProvider();
 
     if(!provider) {
@@ -121,7 +126,10 @@ async function connectWallet() {
     } else {
         ethereum
         .request({ method: 'eth_requestAccounts' })
-        .then(handleAccountsChanged)
+        .then((result)=>{
+            handleAccountsChanged(result);
+            accountHandler(result);
+        })
         .catch((err) => {
             if (err.code === 4001) {
                 console.log('Please connect to MetaMask.');
@@ -129,6 +137,19 @@ async function connectWallet() {
                 console.error(err);
             }
         });
+        ethereum
+            .request({ method: 'eth_chainId' })
+            .then((result)=>{
+                handleChainChanged(result);
+                chainIdHandler(result)
+            })
+            .catch((err) => {
+                if (err.code === 4001) {
+                    console.log('Please connect to MetaMask.');
+                } else {
+                    console.error(err);
+                }
+            });
     }
 }
 
