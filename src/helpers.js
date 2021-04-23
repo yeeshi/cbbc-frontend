@@ -3,16 +3,19 @@ import Web3 from 'web3'
 import cbbcFactory from './abis/CbbcFactory.json'
 import cbbcToken from './abis/CbbcToken.json'
 import cbbcRouter from './abis/CbbcRouter.json'
+import liquidityToken from './abis/CbbcLiquidityToken.json'
 import axios from 'axios'
 
 const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
 const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
 const cbbcTokenAddress = "0xC09EF3F3E8B196368A4C503B6e327D967098eF1F";
+const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
 const priceDataServer = "http://localhost:8000/pricedata";
 
 let web3 = new Web3(Web3.givenProvider);
 let cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
 let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
+let liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
 
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
@@ -23,14 +26,12 @@ const tradeTokenList = getTradeTokenList();
     // for(let i=0;i<cbbcLength;i++) {  //拿持仓
     //     cbbcAddresses.push(await cbbcFactoryInstance.methods.allCbbcs(i).call())  
     // }
-
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
 ethereum.on('chainChanged', handleChainChanged);
 async function handleChainChanged(id) {
     console.log(id);
-    
 }
 
 async function handleAccountsChanged(accounts) {
@@ -46,13 +47,17 @@ function getDeadline() {
 }
 
 function toWei(amount) {
-    return (amount * Math.pow(10, 18)).toString();
+    return BigInt(amount * Math.pow(10, 18)).toString();
 }
 
-//string amount, string ownerAddress, function callback
-async function approveToken(amount, ownerAddress) { 
-    //TODO: should be able to choose the settle token type
-    settleTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
+function toEth(amount) {
+    return BigInt(BigInt(amount) / Math.pow(10, 18)).toString();
+}
+
+//string settleTokenAddr, string amount, string ownerAddress
+async function approveToken(settleTokenAddr, amount, ownerAddress) { 
+    let tokenInstance = new web3.eth.Contract(cbbcToken.abi, settleTokenAddr);
+    tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         return {
             error: error,
             transactionHash: transactionHash
@@ -114,6 +119,23 @@ async function getTokenList(addresses) {
     return list;
 }
 
+//return: string
+async function getTotalLiabilities() {
+    let liabilities = await liquidityTokenInstance.methods.getTotalLiabilities().call()
+    return toEth(liabilities);
+}
+
+//arguments: string settleTokenAddress, int amount, string ownerAddress
+//return: {string error, string transactionHash}
+async function addLiquidity(settleTokenAddr, amount, ownerAddress) {
+    cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
+        .send({from: ownerAddress}, async function(error, transactionHash){
+            return {
+                error: error,
+                transactionHash: transactionHash
+            }
+        });
+}
 
 //连接用户钱包
 async function connectWallet(accountHandler,chainIdHandler) { 
@@ -166,9 +188,11 @@ function getAccount() { //获取用户账户
 export default {
     settleTokenList,
     tradeTokenList,
-    approveToken,
-    buyCbbc,
-    connectWallet,
+    approveToken,  //授权通证
+    buyCbbc,  //购买牛熊证
+    getTotalLiabilities, //显示流动性收益
+    addLiquidity, //添加流动性
+    connectWallet, //连接钱包
     getAccount
 }
 

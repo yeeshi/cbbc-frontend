@@ -10,7 +10,7 @@
               <v-container @click="handleGetAccout" class="pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mb-5 text-center" 
                 :style="isMobile? 'width: 70px;box-shadow: 0 3px 6px rgba(0,0,0,.2); height: 30px; line-height: 30px; background: #FFFFCC; color: #d16c00; border:1px solid #FFFFCC; border-radius: 5px; ': 
                 hover?'width: 100px; height: 40px;box-shadow: 0 3px 6px rgba(0,0,0,.2); line-height: 40px; background: #e9e9b9; color: #d16c00; border:1px solid #e9e9b9; border-radius: 10px; cursor: pointer;':
-                'box-shadow: 0 3px 6px rgba(0,0,0,.2); width: 100px; height: 40px; line-height: 40px; color: #d16c00; background: #FFFFCC; border:1px solid #FFFFCC; border-radius: 10px; cursor: pointer;'"><strong>提取收益</strong></v-container>
+                'box-shadow: 0 3px 6px rgba(0,0,0,.2); width: 100px; height: 40px; line-height: 40px; color: #d16c00; background: #FFFFCC; border:1px solid #FFFFCC; border-radius: 10px; cursor: pointer;'"><strong>刷新收益</strong></v-container>
             </v-hover>
           </v-container>
           <!-- <v-divider></v-divider> -->
@@ -31,7 +31,7 @@
                       isMobile? 'width: 85px; height: 35px; line-height: 35px; font-size: 12px; background: #0483FF; color: #fff; border:1px solid #0483FF; border-radius: 5px; ': 
                       hover?'width: 100px; height: 40px; line-height: 40px; font-size: 14px; background: #0483FF; color: #fff; border:1px solid #0483FF; border-radius: 10px; cursor: pointer;':
                       'width: 100px; height: 40px; line-height: 40px; font-size: 14px; color: #fff; background: #0483FF; border:1px solid #0483FF; border-radius: 10px; cursor: pointer;'">
-                      提取收益</v-container>
+                      刷新收益</v-container>
                 </v-hover>
               </div>
           </v-container>
@@ -159,9 +159,8 @@ export default {
   methods: {
     onResize () {
       this.isMobile = window.innerWidth < 750
-      console.log(window.innerWidth)
     },
-    /// 提取收益
+    /// 刷新收益
     handleGetAccout() {
 
     },
