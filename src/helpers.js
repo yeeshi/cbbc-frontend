@@ -68,6 +68,19 @@ async function approveLiquidityToken(amount, ownerAddress, callback) {
     });
 }
 
+//arguments: string tokenAddr, string ownerAddress
+//return: string
+async function getBalance(tokenAddr, ownerAddress) {
+    let instance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
+    let amount =await instance.methods.balanceOf(ownerAddress).call();
+    return toEth(amount);
+}
+
+async function getLiquilityBalance(ownerAddress) {
+    let amount = await liquidityTokenInstance.methods.balanceOf(ownerAddress).call();
+    return toEth(amount);
+}
+
 //string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress, function callback(error, transactionHash)
 async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, callback) {
     axios.get(priceDataServer)
@@ -263,10 +276,12 @@ export default {
     tradeTokenList,
     approveToken,  //授权通证
     approveLiquidityToken, //授权流动性通证
+    getBalance, //获取通证数量
     buyCbbc,  //购买牛熊证
     sellCbbc, //出售牛熊证
     getPositions, //获取用户持仓列表
     getTotalLiabilities, //显示流动性收益
+    getLiquilityBalance, //获取流动性份额
     addLiquidity, //添加流动性
     removeLiquidity, //移除流动性
     connectWallet, //连接钱包
