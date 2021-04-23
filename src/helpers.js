@@ -53,56 +53,42 @@ function toEth(amount) {
     return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
-//string tokenAddr, string amount, string ownerAddress
-async function approveToken(tokenAddr, amount, ownerAddress) { 
+//arguments: string tokenAddr, string amount, string ownerAddress, function callback(error, transactionHash)
+async function approveToken(tokenAddr, amount, ownerAddress, callback) { 
     let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
     tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
-        return {
-            error: error,
-            transactionHash: transactionHash
-        };
+        callback(error, transactionHash);
     });
 }
 
-//string string amount, string ownerAddress
-async function approveLiquidityToken(amount, ownerAddress) { 
+//string string amount, string ownerAddress, function callback(error, transactionHash)
+async function approveLiquidityToken(amount, ownerAddress, callback) { 
     liquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
-        return {
-            error: error,
-            transactionHash: transactionHash
-        };
+        callback(error, transactionHash);
     });
 }
 
-//string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress
-async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress) {
+//string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress, function callback(error, transactionHash)
+async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, callback) {
     axios.get(priceDataServer)
     .then(function(response) {
         if(response.status == 200) {
             let priceData = response.data;
                 cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
-                    return {
-                        error: error,
-                        transactionHash: transactionHash
-                    };
+                    callback(error, transactionHash);
                 });
         }
         else {
-            console.error(response.status);
             console.error(response);
-
-            return {
-                error: response.status,
-                transactionHash: transactionHash
-            };
+            callback(response.status, transactionHash);
         }
     });
 }
 
 
-//string cbbcAddr, string amount, string ownerAddress
-async function sellCbbc(cbbcAddr, amount, ownerAddress) {
+//string cbbcAddr, string amount, string ownerAddress, function callback(error, transactionHash)
+async function sellCbbc(cbbcAddr, amount, ownerAddress, callback) {
     let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
     let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
     let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
@@ -115,20 +101,12 @@ async function sellCbbc(cbbcAddr, amount, ownerAddress) {
             let priceData = response.data;
                 cbbcRouterInstance.methods.sellCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
-                    return {
-                        error: error,
-                        transactionHash: transactionHash
-                    };
+                    callback(error, transactionHash);
                 });
         }
         else {
-            console.error(response.status);
             console.error(response);
-
-            return {
-                error: response.status,
-                transactionHash: transactionHash
-            };
+            callback(response.status, transactionHash);
         }
     });
 }
@@ -212,28 +190,22 @@ async function getTotalLiabilities() {
     return toEth(liabilities);
 }
 
-//arguments: string settleTokenAddress, int amount, string ownerAddress
+//arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash)
 //return: {string error, string transactionHash}
 async function addLiquidity(settleTokenAddr, amount, ownerAddress) {
     cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
-        return {
-            error: error,
-            transactionHash: transactionHash
-        }
+        callback(error, transactionHash);
     });
 }
 
-//arguments: string settleTokenAddress, int amount, string ownerAddress
+//arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash)
 //return: {string error, string transactionHash}
-async function removeLiquidity(settleTokenAddr, amount, ownerAddress) {
+async function removeLiquidity(settleTokenAddr, amount, ownerAddress, callback) {
     //TODO: add advance mode for user to choose amountMin instead of 0
     cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
-        return {
-            error: error,
-            transactionHash: transactionHash
-        }
+        callback(error, transactionHash);
     });
 }
 
