@@ -66,7 +66,8 @@
                 </div>
               </v-container>
               <v-container class="pt-0 pb-0 d-flex align-center justify-center">
-                <v-btn style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
+                <v-btn v-if="!isChecked"  @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">验证</span></v-btn>
+                <v-btn v-else style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
             </v-form>
           </v-card>
@@ -85,23 +86,34 @@
 <script>
 // @ is an alias to /src
 import vHeader from '@/components/Header.vue'
+import helper from "../helpers"
 export default {
   name: 'Home',
   data: () => ({
     isMobile: true,
     tabs: [{ label: "牛证开仓" }, { label: "熊证开仓" }],
     currentIndex: 0,
-    items: ['item1', 'item2', 'item3', 'item4'],
-    currencies: ['ETH', 'USDT'],
+    items: [],
+    currencies: [],
     ticksLabels: ["10", "20", "50", "100"],
-    input1: ''
+    input1: '',
+    isChecked:false,
   }),
   components: {
     vHeader
   },
-  mounted () {
-      this.onResize()
-      window.addEventListener('resize', this.onResize, { passive: true })
+   mounted () {
+      this.onResize();
+      window.addEventListener('resize', this.onResize, { passive: true });
+      (async()=>{
+        let settleToken = await helper.settleTokenList;
+        let tradeToken = await helper.tradeTokenList;
+        for(let i=0;i<settleToken.length;i++)
+          this.items.push(settleToken[i].name);
+        for(let i=0;i<tradeToken.length;i++)
+          this.currencies.push(settleToken[i].name);
+      })();
+      
   },
   methods: {
     handleTabChange(index) {
@@ -111,6 +123,15 @@ export default {
       this.isMobile = window.innerWidth < 750
       console.log(window.innerWidth)
     },
+    handleVerify(){
+      (async()=>{
+        var err,hash = await helper.approveToken(-1,this.$store.state.defaultAccount);
+        if (hash != ""){
+          this.isChecked = true;
+          console.log(hash);
+        }
+      })();
+    }
   },
   beforeDestroy () {
     if (typeof window === 'undefined') return
