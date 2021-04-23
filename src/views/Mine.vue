@@ -25,7 +25,7 @@
               <div class="d-flex align-center justify-center">
                 <v-hover v-slot="{ hover }">
                   <v-container 
-                    @click="handleAdd" 
+                    @click="handleGetAccout" 
                     class="pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mb-5 text-center mr-5" 
                     :style="
                       isMobile? 'width: 85px; height: 35px; line-height: 35px; font-size: 12px; background: #0483FF; color: #fff; border:1px solid #0483FF; border-radius: 5px; ': 
@@ -162,7 +162,14 @@ export default {
     },
     /// 刷新收益
     handleGetAccout() {
-
+      (async()=>{
+        var number = await helpers.getTotalLiabilities();
+        number = String(number).replace(/^(.*\..{4}).*$/,"$1");
+        number = Number(number);
+        this.list[0].money = number;
+        console.log(await helpers.getTotalLiabilities());
+        console.log(this.list[0].money);
+      })();
     },
     /// 添加流动
     handleAdd() {
