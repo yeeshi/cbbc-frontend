@@ -10,7 +10,7 @@ const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
 const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
 const cbbcTokenAddress = "0xC09EF3F3E8B196368A4C503B6e327D967098eF1F";
 const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
-const priceDataServer = "http://localhost:8000/pricedata";
+const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 
 let web3 = new Web3(Web3.givenProvider);
 let cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
@@ -58,6 +58,16 @@ function toEth(amount) {
 async function approveToken(settleTokenAddr, amount, ownerAddress) { 
     let tokenInstance = new web3.eth.Contract(cbbcToken.abi, settleTokenAddr);
     tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
+        return {
+            error: error,
+            transactionHash: transactionHash
+        };
+    });
+}
+
+//string string amount, string ownerAddress
+async function approveLiquidityToken(amount, ownerAddress) { 
+    liquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         return {
             error: error,
             transactionHash: transactionHash
@@ -129,12 +139,25 @@ async function getTotalLiabilities() {
 //return: {string error, string transactionHash}
 async function addLiquidity(settleTokenAddr, amount, ownerAddress) {
     cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
-        .send({from: ownerAddress}, async function(error, transactionHash){
-            return {
-                error: error,
-                transactionHash: transactionHash
-            }
-        });
+    .send({from: ownerAddress}, async function(error, transactionHash){
+        return {
+            error: error,
+            transactionHash: transactionHash
+        }
+    });
+}
+
+//arguments: string settleTokenAddress, int amount, string ownerAddress
+//return: {string error, string transactionHash}
+async function removeLiquidity(settleTokenAddr, amount, ownerAddress) {
+    //TODO: add advance mode for user to choose amountMin instead of 0
+    cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
+    .send({from: ownerAddress}, async function(error, transactionHash){
+        return {
+            error: error,
+            transactionHash: transactionHash
+        }
+    });
 }
 
 //连接用户钱包
