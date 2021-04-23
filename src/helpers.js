@@ -22,7 +22,6 @@ const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
 
 (async () => {
-    console.log(await getPositions("0xfFCDC69320928d609F656a335a1598592F039592"));
 
 })();
 
