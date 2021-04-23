@@ -139,8 +139,10 @@ export default {
       },
       /// 推出的登录
       handleSignOut() {
-          this.isLogin = false
-          this.overlay = false
+        this.isLogin = false
+        this.overlay = false
+        this.$store.state.defaultAccount = "";
+        this.$store.state.login = false;
       },
       /// 点击取消
       handleCancel() {
