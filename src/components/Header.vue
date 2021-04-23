@@ -136,7 +136,7 @@ export default {
       handleLogoClick() {
 
       },
-      /// 推出的登录
+      /// 退出登录
       handleSignOut() {
         this.isLogin = false
         this.overlay = false
@@ -179,7 +179,7 @@ export default {
         var id = this.$store.state.defaultAccount;
         var chain = this.chainMap.get(this.$store.state.defaultChainId);
         var url = "https://"+chain+".etherscan.io/address/" + id;
-        window.location.href = url;
+        window.open(url);
        
       }
     },
