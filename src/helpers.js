@@ -19,13 +19,11 @@ let liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidity
 
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
+let cbbc = [];  //[{string name,string address,object instance}]
 
 (async () => {
-    // let cbbcAddresses = [];
-    // const cbbcLength = await cbbcFactoryInstance.methods.allCbbcsLength().call();
-    // for(let i=0;i<cbbcLength;i++) {  //拿持仓
-    //     cbbcAddresses.push(await cbbcFactoryInstance.methods.allCbbcs(i).call())  
-    // }
+    console.log(await getPositions("0xfFCDC69320928d609F656a335a1598592F039592"));
+
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
@@ -51,7 +49,7 @@ function toWei(amount) {
 }
 
 function toEth(amount) {
-    return BigInt(BigInt(amount) / Math.pow(10, 18)).toString();
+    return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
 //string settleTokenAddr, string amount, string ownerAddress
@@ -128,6 +126,43 @@ async function getTokenList(addresses) {
     }
     return list;
 }
+
+
+async function getCbbc() {
+    if(cbbc.length == 0) { //lazy loading for cbbc
+        const cbbcLength = await cbbcFactoryInstance.methods.allCbbcsLength().call();
+        for(let i=0;i<cbbcLength;i++) {
+            let cbbcAddress = await cbbcFactoryInstance.methods.allCbbcs(i).call();
+            let instance = new web3.eth.Contract(cbbcToken.abi, cbbcAddress);
+            let name = await instance.methods.name().call();
+            cbbc.push({
+                name: name,
+                address: cbbcAddress,
+                instance: instance
+            });
+        }
+    }
+
+    return cbbc;
+}
+
+
+//arguments: string ownerAddress
+//return: [{string name,int amount}]
+async function getPositions(ownerAddress) {
+    cbbc = await getCbbc();
+    let positions = [];
+    for(let i=0;i<cbbc.length;i++) {
+        let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
+        positions.push({
+            name: cbbc[i].name,
+            amount: toEth(amount)
+        });
+    }
+
+    return positions;
+}
+
 
 //return: string
 async function getTotalLiabilities() {
