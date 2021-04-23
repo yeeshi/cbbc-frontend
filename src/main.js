@@ -11,6 +11,7 @@ var store = new Vuex.Store({
     login : false,
   }
 })
+
 Vue.config.productionTip = false;
 
 
@@ -38,5 +39,6 @@ Vue.prototype.resetSetItem = function (key, newVal) {
 new Vue({
   router,
   vuetify,
+  store,
   render: h => h(App)
 }).$mount('#app');

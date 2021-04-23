@@ -84,7 +84,7 @@
                 </div>
                 <p class="text-h4 textColor--text pt-3 font-weight-bold mb-0">0.00000000</p>
                 <div class="text-caption textColor--text mb-8">SUSHI Balance</div>
-                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleCancel"><span class="textColor--text">View on Earthscan</span></v-btn>
+                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">View on Earthscan</span></v-btn>
                 <v-btn width="100%" class="rounded-lg mb-8" large color="btnColor" @click="handleSignOut"><span class="textColor--text">Sign Out</span></v-btn>
                 <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="btnTextColor--text">Cancel</span></v-btn>
         </v-card>
@@ -98,6 +98,13 @@ import helper from "../helpers"
 export default {
   name: 'Header',
   data() {
+      const chainMap = new Map([
+                ['0x1','Mainnet'],
+                ['0x3','Ropsten'],
+                ['0x4','Rinkeby'],
+                ['0x5','Goerli'],
+                ['0x2a','Kovan']
+            ]); 
       return {
         list: [
             { router: './', label: '交易' },
@@ -110,6 +117,7 @@ export default {
         isLogin: false,
         isShowMobileMenu: false,
         overlay: false, /// 显示遮罩
+        chainMap,
       }
   },
   mounted () {
@@ -149,13 +157,29 @@ export default {
       },
       /// 解锁钱包
       handleUnlock() {
-        this.isLogin = true
-        this.overlay = false
-        helper.connectWallet();
+        helper.connectWallet((account)=>{
+            if(account!="") {
+                this.isLogin = true;
+                this.$store.state.defaultAccount = account;
+                this.$store.state.login = true;
+            }
+        },(id)=>{
+            if(id!="") {
+                this.$store.state.defaultChainId = id;    
+            }
+        });
+        this.overlay = false;
       },
       /// 钱包
       handleShowLayer() {
         this.overlay = true
+      },
+      handleViewOnEarthscan(){
+        var id = this.$store.state.defaultAccount;
+        var chain = this.chainMap.get(this.$store.state.defaultChainId);
+        var url = "https://"+chain+".etherscan.io/address/" + id;
+        window.location.href = url;
+       
       }
     },
     // beforeDestroy () {

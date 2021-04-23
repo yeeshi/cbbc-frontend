@@ -1,6 +1,6 @@
 <template>
     <div class="pl-3 pr-3" style="padding-top: 70px;">
-      <v-container v-if="!isUnLock" style="min-height:calc(100vh - 120px); position: relative;" class="mt-0 mb-0 pt-0 pb-0">
+      <v-container v-if="!$store.state.login" style="min-height:calc(100vh - 120px); position: relative;" class="mt-0 mb-0 pt-0 pb-0">
         <v-btn @click="handleUnLock" class="mr-1 rounded-lg" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" color="btnColor" ><span class="btnTextColor--text">🔓 Unlock Wallet</span></v-btn>
       </v-container>
       <v-container v-else style="min-height:calc(100vh - 70px);" class="mt-0 mb-0">
