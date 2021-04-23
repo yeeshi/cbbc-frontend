@@ -25,7 +25,7 @@
         </div>
         
         
-        <v-btn v-if="!isLogin" @click="handleShowLayer" class="mr-1 rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">Unlock Wallet</span></v-btn>
+        <v-btn v-if="!isLogin" @click="handleShowLayer" class="mr-1 rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">解锁钱包</span></v-btn>
         <v-btn v-else @click="handleShowLayer" class="rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">MyWallet</span></v-btn>
     </div>
     <v-dialog 
@@ -53,24 +53,24 @@
             :width="!isMobile?'512px': '100%'"
             class="pl-5 pr-5 pt-5 pb-5"
         >  
-            <p class="textColor--text font-weight-bold text-center text-h6">Select a wallet provider.</p>
+            <p class="textColor--text font-weight-bold text-center text-h6">请选择钱包类型</p>
             <div class="d-flex align-item pt-8 pb-8" style="width: 100%;">
                 <div class="mr-2 d-inline-flex align-center flex-column pt-3 pb-3 pl-3 pr-3" style="border: 1px solid rgb(226, 214, 207); border-radius: 12px; box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; width: 50%;">
                     <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
                         <img src="../assets/metamask-fox.svg" alt="fox">
                     </div>
                     <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">Metamask</p>
-                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">Connect</span></v-btn>
+                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
                 </div>
                 <div class="ml-2 d-inline-flex align-center flex-column pt-3 pb-3 pl-3 pr-3" style="border: 1px solid rgb(226, 214, 207); border-radius: 12px; box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; width: 50%;">
                     <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
                         <img style="width: 35px;" src="../assets/wallet-connect.svg" alt="connect">
                     </div>
                     <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">WalletConnect</p>
-                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">Connect</span></v-btn>
+                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
                 </div>
             </div>
-            <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="textColor--text">Cancel</span></v-btn>
+            <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="textColor--text">取消</span></v-btn>
         </v-card>
         <v-card
             elevation="2"
