@@ -112,7 +112,6 @@ export default {
       (async()=>{
         let settleToken = await helper.settleTokenList;
         let tradeToken = await helper.tradeTokenList;
-        console.log(settleToken);
         for(let i=0;i<settleToken.length;i++)
           this.currencies.push(settleToken[i].name);
         for(let i=0;i<tradeToken.length;i++)

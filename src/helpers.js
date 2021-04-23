@@ -4,25 +4,27 @@ import cbbcFactory from './abis/CbbcFactory.json'
 import cbbcToken from './abis/CbbcToken.json'
 import cbbcRouter from './abis/CbbcRouter.json'
 import liquidityToken from './abis/CbbcLiquidityToken.json'
+import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 
 const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
 const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
 const cbbcTokenAddress = "0xC09EF3F3E8B196368A4C503B6e327D967098eF1F";
 const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
+const orchestratorAddress = "0x48A6455D399c77193424C23E1349aC11445f2c7a";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 
 let web3 = new Web3(Web3.givenProvider);
-let cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
-let cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
-let liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
+const cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
+const cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
+const liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
+const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestratorAddress);
 
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
 
 (async () => {
-
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
@@ -51,9 +53,9 @@ function toEth(amount) {
     return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
-//string settleTokenAddr, string amount, string ownerAddress
-async function approveToken(settleTokenAddr, amount, ownerAddress) { 
-    let tokenInstance = new web3.eth.Contract(cbbcToken.abi, settleTokenAddr);
+//string tokenAddr, string amount, string ownerAddress
+async function approveToken(tokenAddr, amount, ownerAddress) { 
+    let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
     tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         return {
             error: error,
@@ -79,6 +81,39 @@ async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, 
         if(response.status == 200) {
             let priceData = response.data;
                 cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline())
+                .send({from: ownerAddress}, async function(error, transactionHash){
+                    return {
+                        error: error,
+                        transactionHash: transactionHash
+                    };
+                });
+        }
+        else {
+            console.error(response.status);
+            console.error(response);
+
+            return {
+                error: response.status,
+                transactionHash: transactionHash
+            };
+        }
+    });
+}
+
+
+//string cbbcAddr, string amount, string ownerAddress
+async function sellCbbc(cbbcAddr, amount, ownerAddress) {
+    let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
+    let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
+    let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
+    let leverage = await cbbcInstance.methods.leverage().call();
+    let cbbcType = await cbbcInstance.methods.cbbcType().call();
+
+    axios.get(priceDataServer)
+    .then(function(response) {
+        if(response.status == 200) {
+            let priceData = response.data;
+                cbbcRouterInstance.methods.sellCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     return {
                         error: error,
@@ -153,8 +188,11 @@ async function getPositions(ownerAddress) {
     let positions = [];
     for(let i=0;i<cbbc.length;i++) {
         let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
+        let type = await cbbc[i].instance.methods.cbbcType().call();
         positions.push({
+            address: cbbc[i].address,
             name: cbbc[i].name,
+            type: type,
             amount: toEth(amount)
         });
     }
@@ -162,6 +200,11 @@ async function getPositions(ownerAddress) {
     return positions;
 }
 
+
+//
+async function rebase() {
+
+}
 
 //return: string
 async function getTotalLiabilities() {
@@ -249,6 +292,8 @@ export default {
     approveToken,  //授权通证
     approveLiquidityToken, //授权流动性通证
     buyCbbc,  //购买牛熊证
+    sellCbbc, //出售牛熊证
+    getPositions, //获取用户持仓列表
     getTotalLiabilities, //显示流动性收益
     addLiquidity, //添加流动性
     removeLiquidity, //移除流动性
