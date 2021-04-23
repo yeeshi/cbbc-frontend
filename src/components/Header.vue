@@ -26,7 +26,7 @@
         
         
         <v-btn v-if="!isLogin" @click="handleShowLayer" class="mr-1 rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">解锁钱包</span></v-btn>
-        <v-btn v-else @click="handleShowLayer" class="rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">MyWallet</span></v-btn>
+        <v-btn v-else @click="handleShowLayer" class="rounded-lg" :outlined="isMobile" color="btnColor" ><span class="btnTextColor--text">我的钱包</span></v-btn>
     </div>
     <v-dialog 
         v-model="isShowMobileMenu"
@@ -78,15 +78,15 @@
             :width="!isMobile?'512px': '100%'"
             class="pl-5 pr-5 pt-5 pb-5 text-center"
             v-else>
-                <p class="textColor--text font-weight-bold text-center text-h6">My Account</p>
+                <p class="textColor--text font-weight-bold text-center text-h6">我的账户</p>
                 <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
                     <img src="../assets/metamask-fox.svg" alt="fox">
                 </div>
-                <p class="text-h4 textColor--text pt-3 font-weight-bold mb-0">0.00000000</p>
-                <div class="text-caption textColor--text mb-8">SUSHI Balance</div>
-                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">View on Earthscan</span></v-btn>
-                <v-btn width="100%" class="rounded-lg mb-8" large color="btnColor" @click="handleSignOut"><span class="textColor--text">Sign Out</span></v-btn>
-                <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="btnTextColor--text">Cancel</span></v-btn>
+                <p class="textColor--text pt-3 mb-0">{{this.$store.state.defaultAccount}}</p>
+                <div class="text-caption textColor--text mb-8"></div>
+                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">Etherscan</span></v-btn>
+                <v-btn width="100%" class="rounded-lg mb-8" large color="btnColor" @click="handleSignOut"><span class="textColor--text">登出</span></v-btn>
+                <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="btnTextColor--text">取消</span></v-btn>
         </v-card>
     </v-dialog>
   </div>
@@ -127,7 +127,6 @@ export default {
   methods: {
       onResize () {
         this.isMobile = window.innerWidth < 750
-        console.log(window.innerWidth)
       },
       /// 显示menu
       handleMenu() {
