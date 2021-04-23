@@ -162,7 +162,7 @@ export default {
         helper.connectWallet((account)=>{
             if(account!="") {
                 this.isLogin = true;
-                this.$store.state.defaultAccount = account;
+                this.$store.state.defaultAccount = account[0];
                 this.$store.state.login = true;
             }
         },(id)=>{

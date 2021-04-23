@@ -27,11 +27,12 @@
                 <p class="mb-0 text-subtitle-1 font-weight-bold">标的</p>
                 <v-select
                   :items="items"
+                  v-model="trade"
                   dense
                 ></v-select>
               </v-container>
               <v-container class="mb-5" style="border: 1px solid #f6f6f6; border-radius: 15px;">
-                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><p class="mb-0 text-caption">余额：1000 UDST</p></div>
+                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><!--<p class="mb-0 text-caption">余额：1000 UDST</p>--></div>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
                   <v-text-field
                     class="pt-0"
@@ -42,6 +43,7 @@
                   <v-divider></v-divider>
                   <v-select
                     :items="currencies"
+                    v-model="settle"
                     dense
                     style="width: 25%;"
                     >
@@ -67,7 +69,7 @@
               </v-container>
               <v-container class="pt-0 pb-0 d-flex align-center justify-center">
                 <v-btn v-if="!isChecked"  @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">验证</span></v-btn>
-                <v-btn v-else style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
+                <v-btn v-else @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
             </v-form>
           </v-card>
@@ -98,6 +100,8 @@ export default {
     ticksLabels: ["10", "20", "50", "100"],
     input1: '',
     isChecked:false,
+    settle:'',
+    trade:'',
   }),
   components: {
     vHeader
@@ -108,10 +112,11 @@ export default {
       (async()=>{
         let settleToken = await helper.settleTokenList;
         let tradeToken = await helper.tradeTokenList;
+        console.log(settleToken);
         for(let i=0;i<settleToken.length;i++)
-          this.items.push(settleToken[i].name);
-        for(let i=0;i<tradeToken.length;i++)
           this.currencies.push(settleToken[i].name);
+        for(let i=0;i<tradeToken.length;i++)
+          this.items.push(settleToken[i].name);
       })();
       
   },
@@ -125,12 +130,44 @@ export default {
     },
     handleVerify(){
       (async()=>{
-        var err,hash = await helper.approveToken(-1,this.$store.state.defaultAccount);
+        let settleToken = await helper.settleTokenList;
+        var addr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.settle){
+            addr = settleToken[i].address;
+          }
+        }
+        console.log(this.$store.state.defaultAccount)
+        var err,hash = await helper.approveToken(addr,this.input1,this.$store.state.defaultAccount);
         if (hash != ""){
           this.isChecked = true;
           console.log(hash);
         }
       })();
+    },
+    handleSubmit(){
+      (async()=>{
+        let settleToken = await helper.settleTokenList;
+        var settleAddr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.settle){
+            settleAddr = settleToken[i].address;
+          }
+        }
+
+        let tradeToken = await helper.tradeTokenList;
+        var tradeAddr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.trade){
+            tradeAddr = settleToken[i].address;
+          }
+        }
+        helper.buyCbbc(settleAddr,tradeAddr,1,this.currentIndex,this.input1,this.$store.state.defaultAccount);
+        
+        this.isChecked = false;
+        
+      })();
+      
     }
   },
   beforeDestroy () {
