@@ -161,6 +161,7 @@ async function removeLiquidity(settleTokenAddr, amount, ownerAddress) {
 }
 
 //连接用户钱包
+//arguments: fcuntion accountHandler, function chainIdHandler
 async function connectWallet(accountHandler,chainIdHandler) { 
     const provider = await detectEthereumProvider();
 
@@ -212,9 +213,11 @@ export default {
     settleTokenList,
     tradeTokenList,
     approveToken,  //授权通证
+    approveLiquidityToken, //授权流动性通证
     buyCbbc,  //购买牛熊证
     getTotalLiabilities, //显示流动性收益
     addLiquidity, //添加流动性
+    removeLiquidity, //移除流动性
     connectWallet, //连接钱包
     getAccount
 }
