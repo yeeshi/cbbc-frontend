@@ -172,7 +172,6 @@ export default {
             addr = settleToken[i].address;
           }
         }
-        console.log(this.$store.state.defaultAccount)
         var err,hash = helper.approveToken(addr,this.input1,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error == null){
@@ -204,7 +203,7 @@ export default {
             tradeAddr = tradeToken[i].address;
           }
         }
-        helper.buyCbbc(settleAddr,tradeAddr,trickNumber,this.currentIndex,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;
         }); 
