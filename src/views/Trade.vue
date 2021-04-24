@@ -159,10 +159,11 @@ export default {
         console.log(this.$store.state.defaultAccount)
         var err,hash = helper.approveToken(addr,this.input1,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
-            if (error != null){
+            if (error == null){
               this.verified = true;
               console.log(hash);
             }
+            console.log(error);
             this.VerifingLoading = false;
           });
       })();
