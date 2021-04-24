@@ -40,7 +40,7 @@
             :style="isMobile?'background: #fcfcdb; width: 100%; box-shadow: 0 3px 6px rgba(0,0,0,.08); border: 1px solid #fff4e4; border-radius: 10px;':
             'background: #fcfcdb; box-shadow: 0 3px 6px rgba(0,0,0,.08); width: 30%; margin: 0 1.666%; border: 1px solid #fff4e4; border-radius: 10px;'">
               <img style="width: 80px; height: 80px;" src="../assets/avatar.jpg" alt="img">
-              <p class="text-h5 font-weight-bold mt-8 mb-0">{{item.money}}</p>
+              <p class="text-h5 font-weight-bold mt-8 mb-0">{{totalLiquidity}}</p>
               <p class="text-subtitle-2 font-weight-bold">流动性份额</p>
               <div class="d-flex align-center justify-center">
                 <v-hover v-slot="{ hover }">
@@ -93,7 +93,7 @@
               </div>
             </v-container>
             <v-container class="mb-5 pr-0 pt-0 pb-0">
-              <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供10份流动性</p></div>
+              <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供{{inputAdd}}份流动性</p></div>
             </v-container>
             <v-btn block :loading="isVerifingLoading" :disabled="isVerified" @click="handleVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
             <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
@@ -109,7 +109,7 @@
           <v-container class="text-center font-weight-bold textColor--text text-h6">移除流动性</v-container>
           <v-container class="pl-3 pr-3 pb-5">
              <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; border-radius: 15px;">
-              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">移除份额</p><p class="mb-0 text-caption">最大: 10</p></div>
+              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">移除份额</p><p class="mb-0 text-caption">最大: {{totalLiquidity}}</p></div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
@@ -142,6 +142,7 @@ export default {
     return{
       isShowDialog: false,
       isMobile: false,
+      totalLiquidity:0,
       list: [
         { imgUrl: '', money: '100.00',  },
       ],
@@ -187,6 +188,7 @@ export default {
         for(let i=0;i<settleToken.length;i++)
           this.coinType.push(settleToken[i].name);
         
+        this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         this.coin = settleToken[0].name;
         
       })();
@@ -211,7 +213,7 @@ export default {
       this.isAddSHow = true
     },
     handleMax() {
-      this.inputRemove = 10
+      this.inputRemove = this.totalLiquidity
     },
     /// 清除流动
     handleClear() {
@@ -300,7 +302,7 @@ export default {
             settleAddr = settleToken[i].address;
           }
         }
-        helpers.removeLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helpers.removeLiquidity(settleAddr,this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;
         });
