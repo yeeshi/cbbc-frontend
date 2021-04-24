@@ -144,9 +144,10 @@ async function getTokenList(addresses) {
     let list = [];
     for(let i=0;i<addresses.length;i++) {
         let tokenInstance = new web3.eth.Contract(cbbcToken.abi, addresses[i]);
+        let name =  await tokenInstance.methods.name().call();
         list.push({
             address: addresses[i],
-            name: await tokenInstance.methods.name().call()
+            name: name
         })
     }
     return list;
