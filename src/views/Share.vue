@@ -49,6 +49,7 @@
                 <v-slider
                   max="100"
                   min="1"
+                  v-model="slider1"
                   :thumb-size="18"
                   thumb-label="always"
                 ></v-slider>
@@ -96,7 +97,17 @@ export default {
         { text: '操作', align: 'center', sortable: false, value: 'cz' },
       ],
       desserts: [
-      ]
+      ],
+      slider1:1,
+      max:0,
+    }
+  },
+  watch:{
+    slider1(val){
+      this.input1 = (val/100)*this.max;
+    },
+    input1(val){
+      this.slider1 = parseInt(100*(val/this.max));
     }
   },
   mounted () {
@@ -105,12 +116,14 @@ export default {
     (async()=>{
       var list = await helper.getPositions(this.$store.state.defaultAccount);
       for(let i=0;i<list.length;i++){
-        var t = '牛证';
-        if (list[i].type == 0){
-          t='熊证';
+        if (list[i].amount !=0 ){
+          var t = '牛证';
+          if (list[i].type == 0){
+            t='熊证';
+          }
+          let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '+10USDT', clearingPrice: '100/200'};
+          this.desserts.push(obj);
         }
-        let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '+10USDT', clearingPrice: '100/200'};
-        this.desserts.push(obj);
       }
     })();    
   },
@@ -125,8 +138,10 @@ export default {
     },
     /// 点击平仓
     handleShowDialog(id) {
-      console.log(id)
-      this.isShowDialog = true
+      console.log(id);
+      this.isShowDialog = true;
+      this.max = this.desserts[id].portion;
+      console.log(this.max);
     },
     /// 平仓确认
     handleConfirm() {
