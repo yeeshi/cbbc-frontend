@@ -114,7 +114,7 @@ export default {
         let settleToken = await helper.settleTokenList;
         var addr = "";
         for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name = this.settle){
+          if(settleToken[i].name == this.settle){
             addr = settleToken[i].address;
           }
         }
@@ -170,7 +170,7 @@ export default {
         let settleToken = await helper.settleTokenList;
         var addr = "";
         for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name = this.settle){
+          if(settleToken[i].name == this.settle){
             addr = settleToken[i].address;
           }
         }
@@ -194,7 +194,7 @@ export default {
         let settleToken = await helper.settleTokenList;
         var settleAddr = "";
         for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name = this.settle){
+          if(settleToken[i].name == this.settle){
             settleAddr = settleToken[i].address;
           }
         }
@@ -202,7 +202,7 @@ export default {
         let tradeToken = await helper.tradeTokenList;
         var tradeAddr = "";
         for(let i=0;i<tradeToken.length;i++){
-          if(tradeToken[i].name = this.trade){
+          if(tradeToken[i].name == this.trade){
             tradeAddr = tradeToken[i].address;
           }
         }
