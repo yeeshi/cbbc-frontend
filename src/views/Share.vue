@@ -42,20 +42,6 @@
         <v-card style="background: rgb(240, 233, 231);">
           <v-container class="text-center font-weight-bold textColor--text text-h6">平仓确认</v-container>
           <v-container class="pl-5 pr-5 pb-5">
-             <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
-              <p class="mb-0 text-body-2">平仓比例</p>
-              <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
-                <v-subheader class="pl-0 pr-0">1</v-subheader>
-                <v-slider
-                  max="100"
-                  min="1"
-                  v-model="slider1"
-                  :thumb-size="18"
-                  thumb-label="always"
-                ></v-slider>
-                <v-subheader class="pl-0 pr-0">100</v-subheader>
-              </div>
-            </v-container>
             <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
                 <p class="mb-0 text-body-2">平仓份额</p>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
@@ -66,7 +52,8 @@
                   <p class="mb-0 text-caption">UDST</p>
                 </div>
               </v-container>
-              <v-btn block @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+              <v-btn block @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+              <v-btn block @click="handleSell" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -98,17 +85,10 @@ export default {
       ],
       desserts: [
       ],
-      slider1:1,
       max:0,
     }
   },
   watch:{
-    slider1(val){
-      this.input1 = (val/100)*this.max;
-    },
-    input1(val){
-      this.slider1 = parseInt(100*(val/this.max));
-    }
   },
   mounted () {
     this.onResize();
@@ -147,6 +127,9 @@ export default {
     handleConfirm() {
       this.isShowDialog = false
       this.input1 = ''
+    },
+    handleSell(){
+
     }
   },
   beforeDestroy () {
