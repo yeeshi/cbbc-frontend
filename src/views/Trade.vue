@@ -32,7 +32,7 @@
                 ></v-select>
               </v-container>
               <v-container class="mb-5" style="border: 1px solid #f6f6f6; border-radius: 15px;">
-                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><p class="mb-0 text-caption">余额：1000 UDST</p></div>
+                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><p class="mb-0 text-caption">余额：{{Balance}}</p></div>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
                   <v-text-field
                     class="pt-0"
@@ -106,7 +106,23 @@ export default {
     ticks:'',
     VerifingLoading:false,
     VerifiedLoading:false,
+    Balance:0,
   }),
+  watch:{
+    settle(val){
+      (async()=>{
+        let settleToken = await helper.settleTokenList;
+        var addr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.settle){
+            addr = settleToken[i].address;
+          }
+        }
+        this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+        console.log(this.Balance);
+      })();
+    }
+  },
   components: {
     vHeader
   },
@@ -134,6 +150,8 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
+
+        this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
       
   },
@@ -191,10 +209,7 @@ export default {
         helper.buyCbbc(settleAddr,tradeAddr,trickNumber,this.currentIndex,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;
-        });
-        
-        
-        
+        }); 
       })();
       
     }
