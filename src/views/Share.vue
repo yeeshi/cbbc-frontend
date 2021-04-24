@@ -15,7 +15,7 @@
             :items-per-page="1000"
         >   
           <template v-slot:item.type="{ item }">
-              <img :class="isMobile? 'mt-2 mb-0':'mt-2 mb-2'" style="width: 60px; height: 60px;" :src="item.type" alt="fox" />
+              {{item.type}}
           </template>
           <template v-slot:item.cz="{ item }">
             <v-hover v-slot="{ hover }">
@@ -75,6 +75,7 @@
 </template>
 <script>
 import vFooter from '@/components/Footer.vue'
+import helper from "../helpers"
 export default {
   name: 'Tab2',
   components: {
@@ -95,16 +96,23 @@ export default {
         { text: '操作', align: 'center', sortable: false, value: 'cz' },
       ],
       desserts: [
-        { id: 1, type: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3065179808,949830502&fm=11&gp=0.jpg', breed: 'ETHX1', portion: 10, profit: '+10USDT', clearingPrice: '100/200' },
-        { id: 2, type: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3738324299,1361227017&fm=26&gp=0.jpg', breed: 'ETHX2', portion: 10, profit: '+10USDT', clearingPrice: '100/200' },
-        { id: 3, type: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1062990735,2710469276&fm=11&gp=0.jpg', breed: 'ETHX3', portion: 10, profit: '+10USDT', clearingPrice: '100/200' },
-        { id: 4, type: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=65353652,591609085&fm=11&gp=0.jpg', breed: 'ETHX4', portion: 10, profit: '+10USDT', clearingPrice: '100/200' },
       ]
     }
   },
   mounted () {
-    this.onResize()
-    window.addEventListener('resize', this.onResize, { passive: true })
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+    (async()=>{
+      var list = await helper.getPositions(this.$store.state.defaultAccount);
+      for(let i=0;i<list.length;i++){
+        var t = '牛证';
+        if (list[i].type == 0){
+          t='熊证';
+        }
+        let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '+10USDT', clearingPrice: '100/200'};
+        this.desserts.push(obj);
+      }
+    })();    
   },
   methods: {
     onResize () {

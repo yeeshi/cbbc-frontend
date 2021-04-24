@@ -206,6 +206,7 @@ export default {
             tradeAddr = tradeToken[i].address;
           }
         }
+        console.log(this.input1);
         helper.buyCbbc(settleAddr,tradeAddr,trickNumber,this.currentIndex,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;
