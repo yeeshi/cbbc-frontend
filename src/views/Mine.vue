@@ -204,8 +204,6 @@ export default {
         number = String(number).replace(/^(.*\..{4}).*$/,"$1");
         number = Number(number);
         this.list[0].money = number;
-        console.log(await helpers.getTotalLiabilities());
-        console.log(this.list[0].money);
       })();
     },
     /// 添加流动
@@ -266,12 +264,11 @@ export default {
     handleLiquidityVerify(){
       (async()=>{
         this.LiquidityVerifingLoading = true;
-        var err,hash = helpers.approveLiquidityToken(this.inputAdd,this.$store.state.defaultAccount,
+        var err,hash = helpers.approveLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error == null){
               this.LiquidityVerified = true;
             }
-            console.log(error);
             this.LiquidityVerifingLoading = false;
           });
       })();

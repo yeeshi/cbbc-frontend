@@ -217,7 +217,7 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback) {
 //return: {string error, string transactionHash}
 async function removeLiquidity(settleTokenAddr, amount, ownerAddress, callback) {
     //TODO: add advance mode for user to choose amountMin instead of 0
-    cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
+    cbbcRouterInstance.methods.removeLiquidity("0x3193d3e6392338919D16278Ec9f2846371591d6d", toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     });

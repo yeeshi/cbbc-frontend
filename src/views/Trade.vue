@@ -119,7 +119,6 @@ export default {
           }
         }
         this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
-        console.log(this.Balance);
       })();
     }
   },
@@ -161,7 +160,6 @@ export default {
     },
     onResize () {
       this.isMobile = window.innerWidth < 750
-      console.log(window.innerWidth)
     },
     handleVerify(){
       (async()=>{
@@ -206,7 +204,6 @@ export default {
             tradeAddr = tradeToken[i].address;
           }
         }
-        console.log(this.input1);
         helper.buyCbbc(settleAddr,tradeAddr,trickNumber,this.currentIndex,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;

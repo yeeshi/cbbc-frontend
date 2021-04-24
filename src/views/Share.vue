@@ -128,7 +128,6 @@ export default {
   methods: {
     onResize () {
       this.isMobile = window.innerWidth < 750
-      console.log(window.innerWidth)
     },
     /// 点击解锁
     handleUnLock() {
@@ -136,10 +135,8 @@ export default {
     },
     /// 点击平仓
     handleShowDialog(id) {
-      console.log(id);
       this.isShowDialog = true;
       this.max = this.desserts[id].portion;
-      console.log(this.max);
       this.addresses.forEach(element=>{
         if (element.id == id){
           this.currentAddress = element.address;
