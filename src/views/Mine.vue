@@ -144,7 +144,7 @@ export default {
       isMobile: false,
       totalLiquidity:0,
       list: [
-        { imgUrl: '', money: '100.00',  },
+        { imgUrl: '', money: '0.00',  },
       ],
       coinType:[],
       isAddSHow: false,
