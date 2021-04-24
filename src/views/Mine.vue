@@ -77,26 +77,25 @@
           <v-container class="text-center font-weight-bold textColor--text text-h6">添加流动性</v-container>
           <v-container class="pl-3 pr-3 pb-5">
              <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; border-radius: 15px;">
-              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">ETH输入</p><p class="mb-0 text-caption">最大: 100</p></div>
-              <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
-                <v-text-field
-                  class="pt-0"
-                  v-model="inputAddETH"
-                ></v-text-field>
+              <div class="d-flex align-center justify-space-between">
+              <v-select
+                  :items="coinType"
+                  v-model="coin"
+                  dense
+                ></v-select>
+              <p class="mb-0 text-caption">最大: 100</p>
               </div>
-            </v-container>
-            <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; border-radius: 15px;">
-              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">USD输入</p><p class="mb-0 text-caption">最大: 100</p></div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
-                  v-model="inputAddUSD"
+                  v-model="inputAdd"
                 ></v-text-field>
               </div>
             </v-container>
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供10份流动性</p></div>
             </v-container>
+            <v-btn block @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
             <v-btn block @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
@@ -145,11 +144,12 @@ export default {
       list: [
         { imgUrl: '', money: '100.00',  },
       ],
+      coinType:['ETH','USD'],
       isAddSHow: false,
       isClearShow: false,
-      inputAddETH: '',
-      inputAddUSD: '',
-      inputRemove: ''
+      inputAdd: '',
+      inputRemove: '',
+      coin:'ETH',
     }
   },
   mounted () {
