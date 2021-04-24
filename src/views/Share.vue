@@ -117,7 +117,7 @@ export default {
           if (list[i].type == 0){
             t='熊证';
           }
-          let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '+10USDT', clearingPrice: '100/200'};
+          let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '1.0000', clearingPrice: '1.0200'};
           let addrPair = {id:i,address:list[i].address}
           this.desserts.push(obj);
           this.addresses.push(addrPair);
