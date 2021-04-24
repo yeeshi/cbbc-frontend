@@ -52,8 +52,8 @@
                   <p class="mb-0 text-caption">UDST</p>
                 </div>
               </v-container>
-              <v-btn block @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
-              <v-btn block @click="handleSell" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+              <v-btn block :loading="isVerifingLoading" :disabled="isVerified" @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+              <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleSell" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -86,9 +86,25 @@ export default {
       desserts: [
       ],
       max:0,
+      VerifingLoading:false,
+      VerifiedLoading:false,
+      verified:false,
+      addresses:[],
+      currentAddress:'',
     }
   },
   watch:{
+  },
+  computed: {
+    isVerified: function(){
+      return this.verified;
+    },
+    isVerifingLoading: function(){
+      return this.VerifingLoading;
+    },
+    isVerifiedLoading: function(){
+      return this.VerifiedLoading;
+    }
   },
   mounted () {
     this.onResize();
@@ -102,7 +118,9 @@ export default {
             t='熊证';
           }
           let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '+10USDT', clearingPrice: '100/200'};
+          let addrPair = {id:i,address:list[i].address}
           this.desserts.push(obj);
+          this.addresses.push(addrPair);
         }
       }
     })();    
@@ -122,14 +140,38 @@ export default {
       this.isShowDialog = true;
       this.max = this.desserts[id].portion;
       console.log(this.max);
+      this.addresses.forEach(element=>{
+        if (element.id == id){
+          this.currentAddress = element.address;
+        }
+      });
     },
     /// 平仓确认
     handleConfirm() {
-      this.isShowDialog = false
-      this.input1 = ''
+      (async()=>{    
+        this.VerifingLoading = true;
+        var err,hash = helper.approveToken(this.currentAddress,this.input1,this.$store.state.defaultAccount,
+          (error, transactionHash)=>{
+            if (error == null){
+              this.verified = true;
+              console.log(hash);
+            }
+            console.log(error);
+            this.VerifingLoading = false;
+          });
+      })();
     },
+    /// 平仓
     handleSell(){
-
+      (async()=>{
+        this.VerifiedLoading = true;
+        helper.sellCbbc(this.currentAddress,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+          this.VerifiedLoading = false;
+          this.verified = false;
+          this.input1 = '';
+          this.isShowDialog = false;
+        }); 
+      })();
     }
   },
   beforeDestroy () {
