@@ -205,7 +205,7 @@ async function getTotalLiabilities() {
 
 //arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash)
 //return: {string error, string transactionHash}
-async function addLiquidity(settleTokenAddr, amount, ownerAddress) {
+async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback) {
     cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);

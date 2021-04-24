@@ -95,8 +95,8 @@
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供10份流动性</p></div>
             </v-container>
-            <v-btn block @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
-            <v-btn block @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block :loading="isVerifingLoading" :disabled="isVerified" @click="handleVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -120,7 +120,8 @@
                 </v-subheader>
               </div>
             </v-container>
-            <v-btn block @click="handleClearConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block :loading="isLiquidityVerifingLoading" :disabled="isLiquidityVerified" @click="handleLiquidityVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isLiquidityVerifiedLoading" :disabled="!isLiquidityVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -144,17 +145,51 @@ export default {
       list: [
         { imgUrl: '', money: '100.00',  },
       ],
-      coinType:['ETH','USD'],
+      coinType:[],
       isAddSHow: false,
       isClearShow: false,
       inputAdd: '',
       inputRemove: '',
-      coin:'ETH',
+      coin:'',
+      VerifingLoading:false,
+      VerifiedLoading:false,
+      verified:false,
+      LiquidityVerifingLoading:false,
+      LiquidityVerifiedLoading:false,
+      LiquidityVerified:false,
+    }
+  },
+  computed: {
+    isVerified: function(){
+      return this.verified;
+    },
+    isVerifingLoading: function(){
+      return this.VerifingLoading;
+    },
+    isVerifiedLoading: function(){
+      return this.VerifiedLoading;
+    },
+    isLiquidityVerified: function(){
+      return this.LiquidityVerified;
+    },
+    isLiquidityVerifingLoading: function(){
+      return this.LiquidityVerifingLoading;
+    },
+    isLiquidityVerifiedLoading: function(){
+      return this.LiquidityVerifiedLoading;
     }
   },
   mounted () {
-    this.onResize()
-    window.addEventListener('resize', this.onResize, { passive: true })
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+    (async()=>{
+        let settleToken = await helpers.settleTokenList;
+        for(let i=0;i<settleToken.length;i++)
+          this.coinType.push(settleToken[i].name);
+        
+        this.coin = settleToken[0].name;
+        
+      })();
   },
   methods: {
     onResize () {
@@ -203,6 +238,74 @@ export default {
       this.inputAddETH = ''
       this.inputAddUSD = ''
     },
+    ///验证添加流动
+    handleVerify(){
+      (async()=>{
+        this.VerifingLoading = true;
+        let settleToken = await helpers.settleTokenList;
+        var addr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.coin){
+            addr = settleToken[i].address;
+          }
+        }
+        
+        var err,hash = helpers.approveToken(addr,this.inputAdd,this.$store.state.defaultAccount,
+          (error, transactionHash)=>{
+            if (error == null){
+              this.verified = true;
+            }
+            console.log(error);
+            this.VerifingLoading = false;
+          });
+      })();
+    },
+    ///验证移除流动
+    handleLiquidityVerify(){
+      (async()=>{
+        this.LiquidityVerifingLoading = true;
+        var err,hash = helpers.approveLiquidityToken(this.inputAdd,this.$store.state.defaultAccount,
+          (error, transactionHash)=>{
+            if (error == null){
+              this.LiquidityVerified = true;
+            }
+            console.log(error);
+            this.LiquidityVerifingLoading = false;
+          });
+      })();
+    },
+    handleAddConfirm(){
+      (async()=>{
+        this.VerifiedLoading = true;
+        let settleToken = await helpers.settleTokenList;
+        var settleAddr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.coin){
+            settleAddr = settleToken[i].address;
+          }
+        }
+        helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
+          this.VerifiedLoading = false;
+          this.verified = false;
+        });
+      })(); 
+    },
+    handleRemoveConfirm(){
+      (async()=>{
+        this.VerifiedLoading = true;
+        let settleToken = await helpers.settleTokenList;
+        var settleAddr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name = this.coin){
+            settleAddr = settleToken[i].address;
+          }
+        }
+        helpers.removeLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
+          this.VerifiedLoading = false;
+          this.verified = false;
+        });
+      })(); 
+    }
   },
   beforeDestroy () {
     if (typeof window === 'undefined') return
