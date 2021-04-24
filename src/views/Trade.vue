@@ -64,12 +64,13 @@
                     step="1"
                     ticks="always"
                     tick-size="4"
+                    v-model="ticks"
                   ></v-slider>
                 </div>
               </v-container>
               <v-container class="pt-0 pb-0 d-flex align-center justify-center">
-                <v-btn v-if="!isChecked"  @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">验证</span></v-btn>
-                <v-btn v-else @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
+                <v-btn :loading="isVerifingLoading" :disabled="isVerified" @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
+                <v-btn :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
             </v-form>
           </v-card>
@@ -99,12 +100,26 @@ export default {
     currencies: [],
     ticksLabels: ["10", "20", "50", "100"],
     input1: '',
-    isChecked:false,
+    verified:false,
     settle:'',
     trade:'',
+    ticks:'',
+    VerifingLoading:false,
+    VerifiedLoading:false,
   }),
   components: {
     vHeader
+  },
+  computed: {
+    isVerified: function(){
+      return this.verified;
+    },
+    isVerifingLoading: function(){
+      return this.VerifingLoading;
+    },
+    isVerifiedLoading: function(){
+      return this.VerifiedLoading;
+    }
   },
    mounted () {
       this.onResize();
@@ -115,7 +130,10 @@ export default {
         for(let i=0;i<settleToken.length;i++)
           this.currencies.push(settleToken[i].name);
         for(let i=0;i<tradeToken.length;i++)
-          this.items.push(settleToken[i].name);
+          this.items.push(tradeToken[i].name);
+        
+        this.settle = settleToken[0].name;
+        this.trade = tradeToken[0].name;
       })();
       
   },
@@ -129,6 +147,8 @@ export default {
     },
     handleVerify(){
       (async()=>{
+        
+        this.VerifingLoading = true;
         let settleToken = await helper.settleTokenList;
         var addr = "";
         for(let i=0;i<settleToken.length;i++){
@@ -137,15 +157,21 @@ export default {
           }
         }
         console.log(this.$store.state.defaultAccount)
-        var err,hash = await helper.approveToken(addr,this.input1,this.$store.state.defaultAccount);
-        if (hash != ""){
-          this.isChecked = true;
-          console.log(hash);
-        }
+        var err,hash = helper.approveToken(addr,this.input1,this.$store.state.defaultAccount,
+          (error, transactionHash)=>{
+            if (error != null){
+              this.verified = true;
+              console.log(hash);
+            }
+            this.VerifingLoading = false;
+          });
       })();
     },
     handleSubmit(){
       (async()=>{
+        
+        this.VerifiedLoading = true;
+        var trickNumber = this.ticksLabels[this.ticks];
         let settleToken = await helper.settleTokenList;
         var settleAddr = "";
         for(let i=0;i<settleToken.length;i++){
@@ -161,9 +187,12 @@ export default {
             tradeAddr = settleToken[i].address;
           }
         }
-        helper.buyCbbc(settleAddr,tradeAddr,1,this.currentIndex,this.input1,this.$store.state.defaultAccount);
+        helper.buyCbbc(settleAddr,tradeAddr,1,this.currentIndex,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+          this.VerifiedLoading = false;
+          this.verified = false;
+        });
         
-        this.isChecked = false;
+        
         
       })();
       
