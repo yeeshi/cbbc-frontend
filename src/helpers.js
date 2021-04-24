@@ -192,9 +192,9 @@ async function getPositions(ownerAddress) {
 }
 
 
-//
-async function rebase() {
-
+//string cbbcAddr, string ownerAddress
+async function rebase(cbbcAddr, ownerAddress) {
+    orchestratorInstance.methods.rebase(cbbcAddr).send({from: ownerAddress});
 }
 
 //return: string
@@ -280,6 +280,7 @@ export default {
     buyCbbc,  //购买牛熊证
     sellCbbc, //出售牛熊证
     getPositions, //获取用户持仓列表
+    rebase, //rebase
     getTotalLiabilities, //显示流动性收益
     getLiquilityBalance, //获取流动性份额
     addLiquidity, //添加流动性
