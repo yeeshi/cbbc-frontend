@@ -25,7 +25,7 @@
               'box-shadow: 0 3px 6px rgba(0,0,0,.2);width: 100px; height: 40px; line-height: 40px; color: #fff; background: #FF6871; border:1px solid #FF6871; border-radius: 5px; cursor: pointer;'">平仓</v-container>
             </v-hover>
             <v-hover v-slot="{ hover }">
-              <v-container class="pl-0 pr-0 pt-0 pb-0 mb-2 text-center" 
+              <v-container @click="handleRebase(item.id)" class="pl-0 pr-0 pt-0 pb-0 mb-2 text-center" 
               :style="isMobile? 'box-shadow: 0 3px 6px rgba(0,0,0,.2);width: 70px; height: 30px; line-height: 30px; background: #0483FF; color: #fff; border:1px solid #0483FF; border-radius: 5px; ': 
               hover?'box-shadow: 0 3px 6px rgba(0,0,0,.2);width: 100px; height: 40px; line-height: 40px; background: #0483FF; color: #fff; border:1px solid #0483FF; border-radius: 5px; cursor: pointer;':
               'box-shadow: 0 3px 6px rgba(0,0,0,.2);width: 100px; height: 40px; line-height: 40px; color: #fff; background: #0483FF; border:1px solid #0483FF; border-radius: 5px; cursor: pointer;'">rebase</v-container>
@@ -172,6 +172,15 @@ export default {
           this.isShowDialog = false;
         }); 
       })();
+    },
+    handleRebase(id){
+      var address = '';
+      this.addresses.forEach(element=>{
+        if (element.id == id){
+          address = element.address;
+        }
+      });
+      helper.rebase(address,this.$store.state.defaultAccount);
     }
   },
   beforeDestroy () {
