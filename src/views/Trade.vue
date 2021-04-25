@@ -60,7 +60,7 @@
                 <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                   <v-slider
                     :tick-labels="ticksLabels"
-                    :max="3"
+                    :max="5"
                     step="1"
                     ticks="always"
                     tick-size="4"
@@ -98,7 +98,7 @@ export default {
     currentIndex: 0,
     items: [],
     currencies: [],
-    ticksLabels: ["10", "20", "50", "100"],
+    ticksLabels: ["1", "2", "3", "5", "10", "20"],
     input1: '',
     verified:false,
     settle:'',
