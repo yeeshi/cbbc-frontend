@@ -94,6 +94,23 @@ export default {
     }
   },
   watch:{
+    '$store.state.defaultAccount': function () {
+      (async()=>{
+        var list = await helper.getPositions(this.$store.state.defaultAccount);
+        for(let i=0;i<list.length;i++){
+          if (list[i].amount !=0 ){
+            var t = '牛证';
+            if (list[i].type == 0){
+              t='熊证';
+            }
+            let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '1.0000', clearingPrice: '1.0200'};
+            let addrPair = {id:i,address:list[i].address}
+            this.desserts.push(obj);
+            this.addresses.push(addrPair);
+          }
+        }
+      })(); 
+    }
   },
   computed: {
     isVerified: function(){
@@ -131,7 +148,18 @@ export default {
     },
     /// 点击解锁
     handleUnLock() {
-      this.isUnLock = true
+      helper.connectWallet((account)=>{
+            if(account!="") {
+                this.isLogin = true;
+                this.$store.state.defaultAccount = account[0];
+                this.$store.state.login = true;
+            }
+        },(id)=>{
+            if(id!="") {
+                this.$store.state.defaultChainId = id;    
+            }
+        });
+        
     },
     /// 点击平仓
     handleShowDialog(id) {

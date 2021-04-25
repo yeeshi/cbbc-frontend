@@ -192,6 +192,19 @@ export default {
         this.coin = settleToken[0].name;
         
       })();
+      this.handleGetAccout();
+  },
+  watch: {
+    '$store.state.defaultAccount': function () {
+      (async()=>{
+        let settleToken = await helpers.settleTokenList;
+        for(let i=0;i<settleToken.length;i++)
+          this.coinType.push(settleToken[i].name);
+        
+        this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+        this.coin = settleToken[0].name;    
+      })();
+    }
   },
   methods: {
     onResize () {
