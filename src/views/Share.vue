@@ -49,7 +49,6 @@
                     class="pt-0"
                     v-model="input1"
                   ></v-text-field>
-                  <p class="mb-0 text-caption">UDST</p>
                 </div>
               </v-container>
               <v-btn block :loading="isVerifingLoading" :disabled="isVerified" @click="handleConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
