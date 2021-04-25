@@ -40,7 +40,7 @@
             :style="isMobile?'background: #fcfcdb; width: 100%; box-shadow: 0 3px 6px rgba(0,0,0,.08); border: 1px solid #fff4e4; border-radius: 10px;':
             'background: #fcfcdb; box-shadow: 0 3px 6px rgba(0,0,0,.08); width: 30%; margin: 0 1.666%; border: 1px solid #fff4e4; border-radius: 10px;'">
               <img style="width: 80px; height: 80px;" src="../assets/avatar.jpg" alt="img">
-              <p class="text-h5 font-weight-bold mt-8 mb-0">{{totalLiquidity}}</p>
+              <p class="text-h5 font-weight-bold mt-8 mb-0">{{String(totalLiquidity).replace(/^(.*\..{4}).*$/,"$1")}}</p>
               <p class="text-subtitle-2 font-weight-bold">流动性份额</p>
               <div class="d-flex align-center justify-center">
                 <v-hover v-slot="{ hover }">

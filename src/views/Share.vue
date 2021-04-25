@@ -98,12 +98,12 @@ export default {
       (async()=>{
         var list = await helper.getPositions(this.$store.state.defaultAccount);
         for(let i=0;i<list.length;i++){
-          if (list[i].amount !=0 ){
+          if (list[i].amount > 0.0001 ){
             var t = '牛证';
             if (list[i].type == 0){
               t='熊证';
             }
-            let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '1.0000', clearingPrice: '1.0200'};
+            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
             let addrPair = {id:i,address:list[i].address}
             this.desserts.push(obj);
             this.addresses.push(addrPair);
@@ -129,12 +129,12 @@ export default {
     (async()=>{
       var list = await helper.getPositions(this.$store.state.defaultAccount);
       for(let i=0;i<list.length;i++){
-        if (list[i].amount !=0 ){
+        if (list[i].amount > 0.0001 ){
           var t = '牛证';
           if (list[i].type == 0){
             t='熊证';
           }
-          let obj = {id: i, type: t, breed:list[i].name,portion:list[i].amount,profit: '1.0000', clearingPrice: '1.0200'};
+          let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
           let addrPair = {id:i,address:list[i].address}
           this.desserts.push(obj);
           this.addresses.push(addrPair);

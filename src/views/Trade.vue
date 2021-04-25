@@ -32,7 +32,7 @@
                 ></v-select>
               </v-container>
               <v-container class="mb-5" style="border: 1px solid #f6f6f6; border-radius: 15px;">
-                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><p class="mb-0 text-caption">余额：{{Balance}}</p></div>
+                <div class="d-flex align-center justify-space-between"><p class="mb-0 text-subtitle-1 font-weight-bold">初始投资</p><p class="mb-0 text-caption">余额：{{String(Balance).replace(/^(.*\..{4}).*$/,"$1")}}</p></div>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
                   <v-text-field
                     class="pt-0"
