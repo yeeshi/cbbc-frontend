@@ -124,7 +124,7 @@ export default {
       this.onResize();
       window.addEventListener('resize', this.onResize, { passive: true });
       helper.getAccount((account)=>{
-        if(account!=null){
+        if(account.length>0){
             this.handleUnlock();
         }
       });
