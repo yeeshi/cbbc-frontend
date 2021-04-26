@@ -77,7 +77,7 @@ export default {
       headers: [
         { text: '类型', align: 'start', sortable: false, value: 'type', },
         { text: '币种', align: 'start', sortable: false, value: 'breed', },
-        { text: '份额', align: 'start', sortable: false, value: 'portion', },
+        { text: '数量', align: 'start', sortable: false, value: 'portion', },
         { text: '权证价格', align: 'start', sortable: false, value: 'profit', },
         { text: '清算价', align: 'start', sortable: false, value: 'clearingPrice', },
         { text: '操作', align: 'center', sortable: false, value: 'cz' },

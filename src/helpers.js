@@ -34,7 +34,6 @@ async function handleChainChanged(id) {
 }
 
 async function handleAccountsChanged(accounts) {
-    console.log(accounts);
     if (accounts.length === 0) {
       console.log('Please connect to MetaMask.');
     } else if (accounts[0] !== web3.eth.defaultAccount) {
@@ -54,18 +53,22 @@ function toEth(amount) {
     return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
-//arguments: string tokenAddr, string amount, string ownerAddress, function callback(error, transactionHash)
-async function approveToken(tokenAddr, amount, ownerAddress, callback) { 
+//arguments: string tokenAddr, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function approveToken(tokenAddr, amount, ownerAddress, callback, onConfirm) { 
     let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
     tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm();
     });
 }
 
-//string string amount, string ownerAddress, function callback(error, transactionHash)
-async function approveLiquidityToken(amount, ownerAddress, callback) { 
+//string string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function approveLiquidityToken(amount, ownerAddress, callback, onConfirm) { 
     liquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm();
     });
 }
 
@@ -82,8 +85,8 @@ async function getLiquilityBalance(ownerAddress) {
     return toEth(amount);
 }
 
-//string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress, function callback(error, transactionHash)
-async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, callback) {
+//string settleTokenAddr, string tradeTokenAddr, int leverage, int type, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, callback, onConfirm) {
     axios.get(priceDataServer)
     .then(function(response) {
         if(response.status == 200) {
@@ -91,6 +94,8 @@ async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, 
                 cbbcRouterInstance.methods.buyCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     callback(error, transactionHash);
+                }).once('confirmation', function(confNumber, receipt){
+                    onConfirm();
                 });
         }
         else {
@@ -101,8 +106,8 @@ async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, 
 }
 
 
-//string cbbcAddr, string amount, string ownerAddress, function callback(error, transactionHash)
-async function sellCbbc(cbbcAddr, amount, ownerAddress, callback) {
+//string cbbcAddr, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function sellCbbc(cbbcAddr, amount, ownerAddress, callback, onConfirm) {
     let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
     let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
     let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
@@ -116,6 +121,8 @@ async function sellCbbc(cbbcAddr, amount, ownerAddress, callback) {
                 cbbcRouterInstance.methods.sellCbbc([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, getDeadline())
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     callback(error, transactionHash);
+                }).once('confirmation', function(confNumber, receipt){
+                    onConfirm();
                 });
         }
         else {
@@ -204,23 +211,27 @@ async function getTotalLiabilities() {
     return toEth(liabilities);
 }
 
-//arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash)
+//arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 //return: {string error, string transactionHash}
-async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback) {
+async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onConfirm) {
     cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm();
     });
 }
 
-//arguments: int amount, string ownerAddress, function callback(error, transactionHash)
+//arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 //return: {string error, string transactionHash}
-async function removeLiquidity(amount, ownerAddress, callback) {
+async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {
     //TODO: add advance mode for user to choose amountMin instead of 0
     let settleTokenAddr = await liquidityTokenInstance.methods.settleToken().call();
     cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm();
     });
 }
 
