@@ -222,6 +222,7 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onCo
     });
 }
 
+
 //arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 //return: {string error, string transactionHash}
 async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {

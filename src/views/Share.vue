@@ -43,7 +43,7 @@
           <v-container class="text-center font-weight-bold textColor--text text-h6">平仓确认</v-container>
           <v-container class="pl-5 pr-5 pb-5">
             <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
-                <p class="mb-0 text-body-2">平仓份额</p>
+                <p class="mb-0 text-body-2">平仓数量</p>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
                   <v-text-field
                     class="pt-0"
@@ -163,7 +163,7 @@ export default {
     /// 点击平仓
     handleShowDialog(id) {
       this.isShowDialog = true;
-      this.max = this.desserts[id].portion;
+      
       this.addresses.forEach(element=>{
         if (element.id == id){
           this.currentAddress = element.address;
@@ -174,6 +174,7 @@ export default {
     handleConfirm() {
       (async()=>{    
         this.VerifingLoading = true;
+
         var err,hash = helper.approveToken(this.currentAddress,this.input1,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error == null){
