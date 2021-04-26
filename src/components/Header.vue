@@ -121,8 +121,13 @@ export default {
       }
   },
   mounted () {
-      this.onResize()
-      window.addEventListener('resize', this.onResize, { passive: true })
+      this.onResize();
+      window.addEventListener('resize', this.onResize, { passive: true });
+      helper.getAccount((account)=>{
+        if(account!=null){
+            this.handleUnlock();
+        }
+      });
   },
   methods: {
       onResize () {

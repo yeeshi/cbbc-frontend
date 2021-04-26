@@ -23,7 +23,7 @@ const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestrato
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
-
+getAccount();
 (async () => {
 })();
 
@@ -34,6 +34,7 @@ async function handleChainChanged(id) {
 }
 
 async function handleAccountsChanged(accounts) {
+    console.log(accounts);
     if (accounts.length === 0) {
       console.log('Please connect to MetaMask.');
     } else if (accounts[0] !== web3.eth.defaultAccount) {
@@ -262,10 +263,13 @@ async function connectWallet(accountHandler,chainIdHandler) {
     }
 }
 
-function getAccount() { //获取用户账户
+function getAccount(accountHandler) { //获取用户账户
     ethereum
     .request({ method: 'eth_accounts' })
-    .then(handleAccountsChanged)
+    .then((result)=>{
+        handleAccountsChanged(result);
+        accountHandler(result);
+    })
     .catch((err) => {
         console.error(err);
     });
