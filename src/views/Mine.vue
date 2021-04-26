@@ -306,13 +306,7 @@ export default {
       (async()=>{
         this.VerifiedLoading = true;
         let settleToken = await helpers.settleTokenList;
-        var settleAddr = "";
-        for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name == this.coin){
-            settleAddr = settleToken[i].address;
-          }
-        }
-        helpers.removeLiquidity(settleAddr,this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{
           this.VerifiedLoading = false;
           this.verified = false;
         });

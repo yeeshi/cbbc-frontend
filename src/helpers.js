@@ -144,10 +144,9 @@ async function getTokenList(addresses) {
     let list = [];
     for(let i=0;i<addresses.length;i++) {
         let tokenInstance = new web3.eth.Contract(cbbcToken.abi, addresses[i]);
-        let name =  await tokenInstance.methods.name().call();
         list.push({
             address: addresses[i],
-            name: name
+            name: await tokenInstance.methods.name().call()
         })
     }
     return list;
@@ -213,11 +212,12 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback) {
     });
 }
 
-//arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash)
+//arguments: int amount, string ownerAddress, function callback(error, transactionHash)
 //return: {string error, string transactionHash}
-async function removeLiquidity(settleTokenAddr, amount, ownerAddress, callback) {
+async function removeLiquidity(amount, ownerAddress, callback) {
     //TODO: add advance mode for user to choose amountMin instead of 0
-    cbbcRouterInstance.methods.removeLiquidity("0x3193d3e6392338919D16278Ec9f2846371591d6d", toWei(amount), 0, ownerAddress, getDeadline())
+    let settleTokenAddr = await liquidityTokenInstance.methods.settleToken().call();
+    cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     });
