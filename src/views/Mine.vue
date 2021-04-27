@@ -113,7 +113,7 @@
           <v-container class="text-center font-weight-bold textColor--text text-h6">移除流动性</v-container>
           <v-container class="pl-3 pr-3 pb-5">
              <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; border-radius: 15px;">
-              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">移除份额</p><p class="mb-0 text-caption">持有流动性: {{totalLiquidity}}</p></div>
+              <div class="d-flex align-center justify-space-between"><p class="mb-0 text-body-2">移除份额</p><p class="mb-0 text-caption">持有份额: {{totalLiquidity}}</p></div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
