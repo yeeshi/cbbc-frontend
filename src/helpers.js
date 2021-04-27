@@ -58,7 +58,7 @@ async function approveToken(tokenAddr, amount, ownerAddress, callback, onConfirm
     tokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
-        onConfirm();
+        onConfirm(confNumber, receipt);
     });
 }
 
@@ -67,7 +67,7 @@ async function approveLiquidityToken(amount, ownerAddress, callback, onConfirm) 
     liquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
-        onConfirm();
+        onConfirm(confNumber, receipt);
     });
 }
 
@@ -94,7 +94,7 @@ async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, 
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     callback(error, transactionHash);
                 }).once('confirmation', function(confNumber, receipt){
-                    onConfirm();
+                    onConfirm(confNumber, receipt);
                 });
         }
         else {
@@ -121,7 +121,7 @@ async function sellCbbc(cbbcAddr, amount, ownerAddress, callback, onConfirm) {
                 .send({from: ownerAddress}, async function(error, transactionHash){
                     callback(error, transactionHash);
                 }).once('confirmation', function(confNumber, receipt){
-                    onConfirm();
+                    onConfirm(confNumber, receipt);
                 });
         }
         else {
@@ -218,7 +218,7 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onCo
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
-        onConfirm();
+        onConfirm(confNumber, receipt);
     });
 }
 
@@ -232,7 +232,7 @@ async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
-        onConfirm();
+        onConfirm(confNumber, receipt);
     });
 }
 
