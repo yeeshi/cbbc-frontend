@@ -83,14 +83,18 @@
                   v-model="coin"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">最大: {{String(settleBalance).replace(/^(.*\..{4}).*$/,"$1")}}</p>
+              <p class="mb-0 text-caption">余额: {{String(settleBalance).replace(/^(.*\..{4}).*$/,"$1")}}</p>
               </div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
                   v-model="inputAdd"
                 ></v-text-field>
+                <v-subheader class="pl-0 pr-0" style="padding-bottom: 23px;">
+                  <v-btn color="#0483FF" @click="handleClearMax"><span class="white--text">最大</span></v-btn>
+                </v-subheader>
               </div>
+              
             </v-container>
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供份流动性</p></div>
@@ -116,7 +120,7 @@
                   v-model="inputRemove"
                 ></v-text-field>
                 <v-subheader class="pl-0 pr-0" style="padding-bottom: 23px;">
-                  <v-btn color="#FF6871" @click="handleMax"><span class="white--text">最大</span></v-btn>
+                  <v-btn color="#FF6871" @click="handleAddMax"><span class="white--text">最大</span></v-btn>
                 </v-subheader>
               </div>
             </v-container>
@@ -246,7 +250,10 @@ export default {
     handleAdd() {
       this.isAddSHow = true
     },
-    handleMax() {
+    handleClearMax() {
+      this.inputAdd = this.settleBalance
+    },
+    handleAddMax() {
       this.inputRemove = this.totalLiquidity
     },
     /// 清除流动
