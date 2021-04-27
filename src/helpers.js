@@ -62,6 +62,12 @@ async function approveToken(tokenAddr, amount, ownerAddress, callback, onConfirm
     });
 }
 
+//arguments: string tokenAddr, string ownerAddress
+async function allowance(tokenAddr, ownerAddress) {
+    let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
+    return await tokenInstance.methods.allowance(ownerAddress, cbbcRouterAddress).call();
+}
+
 //string string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function approveLiquidityToken(amount, ownerAddress, callback, onConfirm) { 
     liquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
@@ -292,6 +298,7 @@ function getAccount(accountHandler) { //获取用户账户
 export default {
     settleTokenList,
     tradeTokenList,
+    allowance, //获取授权通证数量
     approveToken,  //授权通证
     approveLiquidityToken, //授权流动性通证
     getBalance, //获取通证数量
