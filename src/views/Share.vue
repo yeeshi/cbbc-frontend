@@ -94,23 +94,7 @@ export default {
   },
   watch:{
     '$store.state.defaultAccount': function () {
-      (async()=>{
-        let list = await helper.getPositions(this.$store.state.defaultAccount);
-        this.desserts = [];
-        this.addresses = [];
-        for(let i=0;i<list.length;i++){
-          if (list[i].amount > 0.0001 ){
-            var t = '牛证';
-            if (list[i].type == 0){
-              t='熊证';
-            }
-            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
-            let addrPair = {id:i,address:list[i].address}
-            this.desserts.push(obj);
-            this.addresses.push(addrPair);
-          }
-        }
-      })(); 
+      this.handleRefresh(); 
     }
   },
   computed: {
@@ -127,25 +111,7 @@ export default {
   mounted () {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
-    (async()=>{
-      let list = await helper.getPositions(this.$store.state.defaultAccount);
-      this.desserts = [];
-      this.addresses = [];
-      for(let i=0;i<list.length;i++){
-        if (list[i].amount > 0.0001 ){
-          var t = '牛证';
-          if (list[i].type == 0){
-            t='熊证';
-          }
-          let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
-          let addrPair = {id:i,address:list[i].address}
-          this.desserts.push(obj);
-          this.addresses.push(addrPair);
-        }
-      }
-     
-      
-    })();    
+    this.handleRefresh();   
   },
   methods: {
     onResize () {
@@ -183,10 +149,12 @@ export default {
 
         var err,hash = helper.approveToken(this.currentAddress,this.input1,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
-            if (error == null){
-              this.verified = true;
-            }
-            console.log(error);
+            if (error != null){
+              console.log(error);
+              this.VerifingLoading = false;
+            } 
+          },(confNumber, receipt)=>{
+            this.verified = true;
             this.VerifingLoading = false;
           });
       })();
@@ -196,11 +164,33 @@ export default {
       (async()=>{
         this.VerifiedLoading = true;
         helper.sellCbbc(this.currentAddress,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+          
+        },(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
           this.input1 = '';
           this.isShowDialog = false;
+          this.handleRefresh();
         }); 
+      })();
+    },
+    handleRefresh(){
+      (async()=>{
+        let list = await helper.getPositions(this.$store.state.defaultAccount);
+        this.desserts = [];
+        this.addresses = [];
+        for(let i=0;i<list.length;i++){
+          if (list[i].amount > 0.0001 ){
+            var t = '牛证';
+            if (list[i].type == 0){
+              t='熊证';
+            }
+            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
+            let addrPair = {id:i,address:list[i].address}
+            this.desserts.push(obj);
+            this.addresses.push(addrPair);
+          }
+        }
       })();
     },
     handleRebase(id){

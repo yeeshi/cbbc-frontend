@@ -188,10 +188,12 @@ export default {
         }
         var err,hash = helper.approveToken(addr,this.input1,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
-            if (error == null){
-              this.verified = true;
+            if (error != null){
+              console.log(error);
+              this.VerifingLoading = false;
             }
-            console.log(error);
+          },(confNumber, receipt)=>{
+            this.verified = true;
             this.VerifingLoading = false;
           });
       })();
@@ -216,9 +218,19 @@ export default {
             tradeAddr = tradeToken[i].address;
           }
         }
-        helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
+          (async()=>{
+            let settleToken = await helper.settleTokenList;
+            var addr = "";
+            for(let i=0;i<settleToken.length;i++){
+              if(settleToken[i].name == this.settle){
+                addr = settleToken[i].address;
+              }
+            }
+            this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+          })();
         }); 
       })();
       

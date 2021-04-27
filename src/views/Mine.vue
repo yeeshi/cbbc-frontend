@@ -185,14 +185,14 @@ export default {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
     (async()=>{
-        let settleToken = await helpers.settleTokenList;
-        for(let i=0;i<settleToken.length;i++)
-          this.coinType.push(settleToken[i].name);
-        
-        this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
-        this.coin = settleToken[0].name;
-        
-      })();
+      let settleToken = await helpers.settleTokenList;
+      for(let i=0;i<settleToken.length;i++)
+        this.coinType.push(settleToken[i].name);
+      
+      this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+      this.coin = settleToken[0].name;
+      
+    })();
       this.handleGetAccout();
   },
   watch: {
@@ -232,7 +232,17 @@ export default {
         this.list[0].money = number;
       })();
     },
-    /// 添加流动
+    handleRefreshData(){
+      (async()=>{
+        let settleToken = await helpers.settleTokenList;
+        for(let i=0;i<settleToken.length;i++)
+          this.coinType.push(settleToken[i].name);
+        
+        this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+        this.coin = settleToken[0].name;
+        this.settleBalance = await helpers.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
+      })();
+    },/// 添加流动
     handleAdd() {
       this.isAddSHow = true
     },
@@ -278,10 +288,13 @@ export default {
         
         var err,hash = helpers.approveToken(addr,this.inputAdd,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
-            if (error == null){
-              this.verified = true;
+            if (error != null){
+              console.log(error);
+              this.VerifingLoading = false;
             }
-            console.log(error);
+            
+          },(confNumber, receipt)=>{
+            this.verified = true;
             this.VerifingLoading = false;
           });
       })();
@@ -292,10 +305,13 @@ export default {
         this.LiquidityVerifingLoading = true;
         var err,hash = helpers.approveLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
-            if (error == null){
-              this.LiquidityVerified = true;
+            if (error != null){
+              console.log(error);
+              this.LiquidityVerifingLoading = false;
             }
-            this.LiquidityVerifingLoading = false;
+          },(confNumber, receipt)=>{
+              this.LiquidityVerified = true;
+              this.LiquidityVerifingLoading = false;
           });
       })();
     },
@@ -309,7 +325,7 @@ export default {
             settleAddr = settleToken[i].address;
           }
         }
-        helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
         });
@@ -319,7 +335,7 @@ export default {
       (async()=>{
         this.VerifiedLoading = true;
         let settleToken = await helpers.settleTokenList;
-        helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{
+        helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
         });
