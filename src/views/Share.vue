@@ -96,6 +96,8 @@ export default {
     '$store.state.defaultAccount': function () {
       (async()=>{
         var list = await helper.getPositions(this.$store.state.defaultAccount);
+        this.desserts = [];
+        this.addresses = [];
         for(let i=0;i<list.length;i++){
           if (list[i].amount > 0.0001 ){
             var t = '牛证';
@@ -127,6 +129,8 @@ export default {
     window.addEventListener('resize', this.onResize, { passive: true });
     (async()=>{
       var list = await helper.getPositions(this.$store.state.defaultAccount);
+      this.desserts = [];
+      this.addresses = [];
       for(let i=0;i<list.length;i++){
         if (list[i].amount > 0.0001 ){
           var t = '牛证';
