@@ -201,8 +201,10 @@ async function getPositions(ownerAddress) {
 
 
 //string cbbcAddr, string ownerAddress
-async function rebase(cbbcAddr, ownerAddress) {
-    orchestratorInstance.methods.rebase(cbbcAddr).send({from: ownerAddress});
+async function rebase(cbbcAddr, ownerAddress,onConfirm) {
+    orchestratorInstance.methods.rebase(cbbcAddr).send({from: ownerAddress}).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
 }
 
 //return: string

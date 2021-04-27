@@ -200,7 +200,9 @@ export default {
           address = element.address;
         }
       });
-      helper.rebase(address,this.$store.state.defaultAccount);
+      helper.rebase(address,this.$store.state.defaultAccount,(confNumber, receipt)=>{
+        this.handleRefresh();
+      });
     }
   },
   beforeDestroy () {
