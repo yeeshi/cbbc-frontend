@@ -42,6 +42,21 @@
         <v-card style="background: rgb(240, 233, 231);">
           <v-container class="text-center font-weight-bold textColor--text text-h6">平仓确认</v-container>
           <v-container class="pl-5 pr-5 pb-5">
+             <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
+              <p class="mb-0 text-body-2">平仓比例</p>
+              <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
+                <v-subheader class="pl-0 pr-0">1</v-subheader>
+                <v-slider
+                  max="100"
+                  min="1"
+                  v-model="slider1"
+                  :thumb-size="18"
+                  thumb-label="always"
+                ></v-slider>
+                <v-subheader class="pl-0 pr-0">100</v-subheader>
+              </div>
+            </v-container>
+          
             <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
                 <p class="mb-0 text-body-2">平仓数量</p>
                 <div class="d-flex align-center justify-space-between" style="height: 44px;">
@@ -90,11 +105,17 @@ export default {
       verified:false,
       addresses:[],
       currentAddress:'',
+      slider1:1,
     }
   },
   watch:{
     '$store.state.defaultAccount': function () {
       this.handleRefresh(); 
+    },
+    slider1(val){
+      let temp = (val/100)*Number(this.max);
+      console.log(Number(this.max));
+      this.input1 = temp;
     }
   },
   computed: {
@@ -141,6 +162,14 @@ export default {
           this.currentAddress = element.address;
         }
       });
+      this.desserts.forEach(
+        element=>{
+        if (element.id == id){
+          this.max = element.portion;
+          console.log(element);
+        }
+      }
+      );
     },
     /// 平仓确认
     handleConfirm() {
