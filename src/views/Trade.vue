@@ -132,6 +132,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
+        this.currencies.push('ETH');
 
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
@@ -164,6 +165,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
+        this.currencies.push('ETH');
 
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
