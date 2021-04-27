@@ -23,7 +23,6 @@ const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestrato
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
-getAccount();
 (async () => {
 })();
 
@@ -185,6 +184,7 @@ async function getCbbc() {
 async function getPositions(ownerAddress) {
     cbbc = await getCbbc();
     let positions = [];
+    
     for(let i=0;i<cbbc.length;i++) {
         let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
         let type = await cbbc[i].instance.methods.cbbcType().call();
@@ -195,7 +195,7 @@ async function getPositions(ownerAddress) {
             amount: toEth(amount)
         });
     }
-
+    console.log(positions);
     return positions;
 }
 

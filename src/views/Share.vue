@@ -95,7 +95,7 @@ export default {
   watch:{
     '$store.state.defaultAccount': function () {
       (async()=>{
-        var list = await helper.getPositions(this.$store.state.defaultAccount);
+        let list = await helper.getPositions(this.$store.state.defaultAccount);
         this.desserts = [];
         this.addresses = [];
         for(let i=0;i<list.length;i++){
@@ -128,7 +128,7 @@ export default {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
     (async()=>{
-      var list = await helper.getPositions(this.$store.state.defaultAccount);
+      let list = await helper.getPositions(this.$store.state.defaultAccount);
       this.desserts = [];
       this.addresses = [];
       for(let i=0;i<list.length;i++){
@@ -143,6 +143,8 @@ export default {
           this.addresses.push(addrPair);
         }
       }
+     
+      
     })();    
   },
   methods: {
@@ -183,7 +185,6 @@ export default {
           (error, transactionHash)=>{
             if (error == null){
               this.verified = true;
-              console.log(hash);
             }
             console.log(error);
             this.VerifingLoading = false;

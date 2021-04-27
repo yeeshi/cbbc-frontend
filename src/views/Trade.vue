@@ -120,6 +120,21 @@ export default {
         }
         this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
       })();
+    },
+    '$store.state.defaultAccount': function () {
+      (async()=>{
+        let settleToken = await helper.settleTokenList;
+        let tradeToken = await helper.tradeTokenList;
+        for(let i=0;i<settleToken.length;i++)
+          this.currencies.push(settleToken[i].name);
+        for(let i=0;i<tradeToken.length;i++)
+          this.items.push(tradeToken[i].name);
+        
+        this.settle = settleToken[0].name;
+        this.trade = tradeToken[0].name;
+
+        this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
+      })();
     }
   },
   components: {
@@ -154,23 +169,6 @@ export default {
       })();
       
   },
-  watch: {
-    '$store.state.defaultAccount': function () {
-      (async()=>{
-        let settleToken = await helper.settleTokenList;
-        let tradeToken = await helper.tradeTokenList;
-        for(let i=0;i<settleToken.length;i++)
-          this.currencies.push(settleToken[i].name);
-        for(let i=0;i<tradeToken.length;i++)
-          this.items.push(tradeToken[i].name);
-        
-        this.settle = settleToken[0].name;
-        this.trade = tradeToken[0].name;
-
-        this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
-      })();
-    }
-  },
   methods: {
     handleTabChange(index) {
       this.currentIndex = index
@@ -180,7 +178,6 @@ export default {
     },
     handleVerify(){
       (async()=>{
-        
         this.VerifingLoading = true;
         let settleToken = await helper.settleTokenList;
         var addr = "";
@@ -193,7 +190,6 @@ export default {
           (error, transactionHash)=>{
             if (error == null){
               this.verified = true;
-              console.log(hash);
             }
             console.log(error);
             this.VerifingLoading = false;

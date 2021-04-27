@@ -155,7 +155,6 @@ export default {
       /// 点击跳转
       handleRouter(index) {
           this.currentIndex = index
-          console.log(this.list[index].router)
           this.$router.push(this.list[index].router)
           if(this.isMobile) {
             this.isShowMobileMenu = false 
