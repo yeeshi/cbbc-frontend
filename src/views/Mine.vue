@@ -83,7 +83,7 @@
                   v-model="coin"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">最大: 100</p>
+              <p class="mb-0 text-caption">最大: {{String(settleBalance).replace(/^(.*\..{4}).*$/,"$1")}}</p>
               </div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
@@ -158,6 +158,7 @@ export default {
       LiquidityVerifingLoading:false,
       LiquidityVerifiedLoading:false,
       LiquidityVerified:false,
+      settleBalance:0,
     }
   },
   computed: {
@@ -203,6 +204,18 @@ export default {
         
         this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         this.coin = settleToken[0].name;    
+      })();
+    },
+    coin(val){
+      (async()=>{
+        let settleToken = await helpers.settleTokenList;
+        var addr = "";
+        for(let i=0;i<settleToken.length;i++){
+          if(settleToken[i].name == this.coin){
+            addr = settleToken[i].address;
+          }
+        }
+        this.settleBalance = await helpers.getBalance(addr,this.$store.state.defaultAccount);
       })();
     }
   },
