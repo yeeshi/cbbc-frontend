@@ -253,27 +253,6 @@ export default {
     handleClear() {
       this.isClearShow = true
     },
-    /// 弹窗确认
-    handleAddConfirm() {
-      this.isAddSHow = false
-      this.isClearShow = false
-      
-      liquidityChange(this.inputAddETH?this.inputAddETH:this.intputAddUSD)
-      
-      this.inputRemove = ''
-      this.inputAddETH = ''
-      this.inputAddUSD = ''
-    },
-    handleClearConfirm() {
-      this.isAddSHow = false
-      this.isClearShow = false
-      
-      liquidityChange(this.inputRemove)
-      
-      this.inputRemove = ''
-      this.inputAddETH = ''
-      this.inputAddUSD = ''
-    },
     ///验证添加流动
     handleVerify(){
       (async()=>{
@@ -325,9 +304,14 @@ export default {
             settleAddr = settleToken[i].address;
           }
         }
+        console.log(settleAddr);
         helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
+          if (confNumber == 0){
+            this.isAddSHow = false;
+            
+          }
         });
       })(); 
     },
@@ -338,6 +322,9 @@ export default {
         helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
+          if (confNumber == 0){
+            this.isClearShow = false;
+          }
         });
       })(); 
     }
