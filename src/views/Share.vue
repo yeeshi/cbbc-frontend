@@ -79,7 +79,7 @@ export default {
         { text: '币种', align: 'start', sortable: false, value: 'breed', },
         { text: '数量', align: 'start', sortable: false, value: 'portion', },
         { text: '权证价格', align: 'start', sortable: false, value: 'profit', },
-        { text: '清算价', align: 'start', sortable: false, value: 'clearingPrice', },
+        { text: 'rebase目标价', align: 'start', sortable: false, value: 'clearingPrice', },
         { text: '操作', align: 'center', sortable: false, value: 'cz' },
       ],
       desserts: [
@@ -104,7 +104,7 @@ export default {
             if (list[i].type == 0){
               t='熊证';
             }
-            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0200'};
+            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0000'};
             let addrPair = {id:i,address:list[i].address}
             this.desserts.push(obj);
             this.addresses.push(addrPair);
