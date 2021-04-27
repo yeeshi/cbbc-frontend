@@ -179,17 +179,19 @@ export default {
         let list = await helper.getPositions(this.$store.state.defaultAccount);
         this.desserts = [];
         this.addresses = [];
-        for(let i=0;i<list.length;i++){
-          if (list[i].amount > 0.0001 ){
+        let index = 0;
+        for (let [key, value] of list.entries()) {
+          if (value.amount > 0.0001 ){
             var t = '牛证';
-            if (list[i].type == 0){
+            if (value.type == 0){
               t='熊证';
             }
-            let obj = {id: i, type: t, breed:list[i].name,portion:String(list[i].amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0000'};
-            let addrPair = {id:i,address:list[i].address}
+            let obj = {id: index, type: t, breed:value.name,portion:String(value.amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0000'};
+            let addrPair = {id:index,address:value.address}
             this.desserts.push(obj);
             this.addresses.push(addrPair);
           }
+          index++;
         }
       })();
     },

@@ -183,19 +183,18 @@ async function getCbbc() {
 //return: [{string name,int amount}]
 async function getPositions(ownerAddress) {
     cbbc = await getCbbc();
-    let positions = [];
+    let positions = new Map();
     
     for(let i=0;i<cbbc.length;i++) {
         let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
         let type = await cbbc[i].instance.methods.cbbcType().call();
-        positions.push({
+        positions.set(cbbc[i].address, {
             address: cbbc[i].address,
             name: cbbc[i].name,
             type: type,
             amount: toEth(amount)
         });
     }
-    console.log(positions);
     return positions;
 }
 
