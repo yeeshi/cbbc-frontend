@@ -52,6 +52,14 @@ function toEth(amount) {
     return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
+//argument: string ownerAddress
+async function getETHBalance(ownerAddress) {
+    web3.eth.getBalance(ownerAddress, (err, balance) => {
+        return toEth(balance);
+    });
+}
+
+
 //arguments: string tokenAddr, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function approveToken(tokenAddr, amount, ownerAddress, callback, onConfirm) { 
     let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
@@ -298,6 +306,7 @@ function getAccount(accountHandler) { //获取用户账户
 export default {
     settleTokenList,
     tradeTokenList,
+    getETHBalance, //获取用户ETH数量
     allowance, //获取授权通证数量
     approveToken,  //授权通证
     approveLiquidityToken, //授权流动性通证
