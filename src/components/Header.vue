@@ -83,6 +83,7 @@
                     <img src="../assets/metamask-fox.svg" alt="fox">
                 </div>
                 <p class="textColor--text pt-3 mb-0">{{this.$store.state.defaultAccount}}</p>
+                <p class="textColor--text pt-3 mb-0">ETH: {{this.eth}}</p>
                 <div class="text-caption textColor--text mb-8"></div>
                 <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">Etherscan</span></v-btn>
                 <v-btn width="100%" class="rounded-lg mb-8" large color="btnColor" @click="handleSignOut"><span class="textColor--text">登出</span></v-btn>
@@ -118,6 +119,7 @@ export default {
         isShowMobileMenu: false,
         overlay: false, /// 显示遮罩
         chainMap,
+        eth:0,
       }
   },
   mounted () {
@@ -128,6 +130,15 @@ export default {
             this.handleUnlock();
         }
       });
+  },
+  watch: {
+      '$store.state.defaultAccount': function (val) {
+          (async()=>{   
+            await helper.getETHBalance(val,(balance)=>{
+                this.eth = String(balance).replace(/^(.*\..{4}).*$/,"$1");
+            });
+          })();
+      } 
   },
   methods: {
       onResize () {
@@ -167,6 +178,7 @@ export default {
                 this.isLogin = true;
                 this.$store.state.defaultAccount = account[0];
                 this.$store.state.login = true;
+               
             }
         },(id)=>{
             if(id!="") {

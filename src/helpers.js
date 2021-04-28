@@ -53,10 +53,11 @@ function toEth(amount) {
 }
 
 //argument: string ownerAddress
-async function getETHBalance(ownerAddress) {
+async function getETHBalance(ownerAddress,callback) {
     web3.eth.getBalance(ownerAddress, (err, balance) => {
-        return toEth(balance);
+        callback(toEth(balance));
     });
+    
 }
 
 
