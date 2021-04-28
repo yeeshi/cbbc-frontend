@@ -13,7 +13,7 @@ const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
 const wethAddress = "0x9F4B99590B6577C4515BF314597B6D4dCA8af45A";
 const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
 const orchestratorAddress = "0x48A6455D399c77193424C23E1349aC11445f2c7a";
-const priceDataServer = "http://localhost:8000/pricedata";//"http://34.212.231.157";//"http://localhost:8000/pricedata";
+const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
 
 let web3 = new Web3(Web3.givenProvider);
