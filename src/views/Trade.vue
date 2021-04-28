@@ -69,7 +69,7 @@
                 </div>
               </v-container>
               <v-container class="pt-0 pb-0 d-flex align-center justify-center">
-                <v-btn :loading="isVerifingLoading" :disabled="isVerified" @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
+                <v-btn :loading="isVerifingLoading" v-show="!isVerified" @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
                 <v-btn :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
             </v-form>
@@ -100,13 +100,14 @@ export default {
     currencies: [],
     ticksLabels: ["1", "2", "3", "5", "10", "20"],
     input1: '',
-    verified:false,
+    verified:true,
     settle:'',
     trade:'',
     ticks:'',
     VerifingLoading:false,
     VerifiedLoading:false,
     Balance:0,
+    allow:0
   }),
   watch:{
     settle(val){
@@ -119,6 +120,8 @@ export default {
           }
         }
         this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+        this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
+        console.log(this.allow);
       })();
     },
     '$store.state.defaultAccount': function () {
@@ -135,6 +138,13 @@ export default {
 
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
+    },
+    input1(val){
+      if (val>this.allow){
+        this.verified = false;
+      }else{
+        this.verified = true;
+      }
     }
   },
   components: {
@@ -186,15 +196,17 @@ export default {
             addr = settleToken[i].address;
           }
         }
-        var err,hash = helper.approveToken(addr,this.input1,this.$store.state.defaultAccount,
+        var err,hash = helper.approveToken(addr,this.Balance,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
               this.VerifingLoading = false;
             }
-          },(confNumber, receipt)=>{
+          },async(confNumber, receipt)=>{
             this.verified = true;
             this.VerifingLoading = false;
+            this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
+            
           });
       })();
     },

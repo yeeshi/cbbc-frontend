@@ -31,6 +31,7 @@ let cbbc = [];  //[{string name,string address,object instance}]
 ethereum.on('accountsChanged', handleAccountsChanged);
 ethereum.on('chainChanged', handleChainChanged);
 async function handleChainChanged(id) {
+    
 }
 
 async function handleAccountsChanged(accounts) {
@@ -76,7 +77,7 @@ async function approveToken(tokenAddr, amount, ownerAddress, callback, onConfirm
 //arguments: string tokenAddr, string ownerAddress
 async function allowance(tokenAddr, ownerAddress) {
     let tokenInstance = new web3.eth.Contract(cbbcToken.abi, tokenAddr);
-    return await tokenInstance.methods.allowance(ownerAddress, cbbcRouterAddress).call();
+    return toEth(await tokenInstance.methods.allowance(ownerAddress, cbbcRouterAddress).call());
 }
 
 //string string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
