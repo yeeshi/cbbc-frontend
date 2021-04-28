@@ -174,7 +174,11 @@ async function buyCbbcETH(tradeTokenAddr, leverage, type, amount, ownerAddress, 
             let priceData = response.data;
             let data = cbbcRouterInstance.methods.buyCbbcETH([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
                                                                 tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline()).encodeABI();
-            web3.eth.sendTransaction({to:cbbcRouterAddress, from:ownerAddress, data: data, value: toWei(amount)});
+            web3.eth.sendTransaction({to:cbbcRouterAddress, from:ownerAddress, data: data, value: toWei(amount)}, async function(error, transactionHash){
+                callback(error, transactionHash);
+            }).once('confirmation', function(confNumber, receipt){
+                onConfirm(confNumber, receipt);
+            });
         }
         else {
             console.error(response);
@@ -397,6 +401,7 @@ export default {
     approveLiquidityToken, //授权流动性通证
     getBalance, //获取通证数量
     buyCbbc,  //购买牛熊证
+    buyCbbcETH, //用ETH购买牛熊证
     sellCbbc, //出售牛熊证
     getPositions, //获取用户持仓列表
     rebase, //rebase
