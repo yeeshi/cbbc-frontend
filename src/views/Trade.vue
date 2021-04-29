@@ -146,11 +146,14 @@ export default {
       })();
     },
     input1(val){
-      if (val>this.allow){
-        this.verified = false;
-      }else{
-        this.verified = true;
+      if (this.settle != 'ETH'){
+        if (val>this.allow){
+          this.verified = false;
+        }else{
+          this.verified = true;
+        }
       }
+      
     }
   },
   components: {
@@ -228,7 +231,11 @@ export default {
         }
         var trickNumber = this.ticksLabels[this.ticks];
         if (this.settle == 'ETH'){
-          helper.buyCbbcETH(tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
+          helper.buyCbbcETH(tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+              if(error!=null){
+                  this.VerifiedLoading = false;
+              }
+          },(confNumber, receipt)=>{
               this.VerifiedLoading = false;
               this.verified = false;
               (async()=>{
@@ -246,7 +253,11 @@ export default {
               settleAddr = settleToken[i].address;
             }
           }
-          helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
+          helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
+              if(error!=null){
+                  this.VerifiedLoading = false;
+              }
+          },(confNumber, receipt)=>{
               this.VerifiedLoading = false;
               this.verified = false;
               (async()=>{
