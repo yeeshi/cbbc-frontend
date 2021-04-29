@@ -12,6 +12,7 @@ const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
 const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
 const wethAddress = "0x9F4B99590B6577C4515BF314597B6D4dCA8af45A";
 const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
+const ETHLiquidityTokenAddress = "0x47d6B7e92682E2286d5D1146b305f7EF6AE48b92";
 const orchestratorAddress = "0x48A6455D399c77193424C23E1349aC11445f2c7a";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
@@ -20,6 +21,7 @@ let web3 = new Web3(Web3.givenProvider);
 const cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
 const cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 const liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
+const ETHLiquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, ETHLiquidityTokenAddress);
 const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestratorAddress);
 
 const settleTokenList = getSettleTokenList();
@@ -89,6 +91,15 @@ async function approveLiquidityToken(amount, ownerAddress, callback, onConfirm) 
     });
 }
 
+//string string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function approveETHLiquidityToken(amount, ownerAddress, callback, onConfirm) { 
+    ETHLiquidityTokenInstance.methods.approve(cbbcRouterAddress, toWei(amount)).send({from:ownerAddress}, async function(error, transactionHash){
+        callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
+}
+
 async function getSignature(amount, ownerAddress) {
     const msgParams = JSON.stringify({
         domain: {
@@ -141,10 +152,6 @@ async function getBalance(tokenAddr, ownerAddress) {
     return toEth(amount);
 }
 
-async function getLiquilityBalance(ownerAddress) {
-    let amount = await liquidityTokenInstance.methods.balanceOf(ownerAddress).call();
-    return toEth(amount);
-}
 
 //arguments: string settleTokenAddr, string tradeTokenAddr, int leverage, int type, int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function buyCbbc(settleTokenAddr, tradeTokenAddr, leverage, type, amount, ownerAddress, callback, onConfirm) {
@@ -326,9 +333,17 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onCo
     });
 }
 
+async function addLiquidityETH(amount, ownerAddress,callback, onConfirm) {
+    cbbcRouterInstance.methods.addLiquidityETH(toWei(amount), ownerAddress, getDeadline())
+    .send({from: ownerAddress, value:toWei(amount)}, async function(error, transactionHash){
+        callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
+}
+
 
 //arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
-//return: {string error, string transactionHash}
 async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {
     //TODO: add advance mode for user to choose amountMin instead of 0
     let settleTokenAddr = await liquidityTokenInstance.methods.settleToken().call();
@@ -338,6 +353,28 @@ async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {
     }).once('confirmation', function(confNumber, receipt){
         onConfirm(confNumber, receipt);
     });
+}
+
+//arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function removeLiquidityETH(amount, ownerAddress, callback, onConfirm) {
+    //TODO: add advance mode for user to choose amountMin instead of 0
+    cbbcRouterInstance.methods.removeLiquidityETH(toWei(amount), 0, ownerAddress, getDeadline())
+    .send({from: ownerAddress}, async function(error, transactionHash){
+        callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
+}
+
+
+async function getLiquilityBalance(ownerAddress) {
+    let amount = await liquidityTokenInstance.methods.balanceOf(ownerAddress).call();
+    return toEth(amount);
+}
+
+async function getETHLiquilityBalance(ownerAddress) {
+    let amount = await liquidityTokenInstance.methods.balanceOf(ownerAddress).call();
+    return toEth(amount);
 }
 
 //连接用户钱包
@@ -398,7 +435,8 @@ export default {
     getETHBalance, //获取用户ETH数量
     allowance, //获取授权通证数量
     approveToken,  //授权通证
-    approveLiquidityToken, //授权流动性通证
+    approveLiquidityToken, //授权cbbcRouter流动性通证调用权
+    approveETHLiquidityToken, //授权cbbcRouter ETH流动性通证调用权
     getBalance, //获取通证数量
     buyCbbc,  //购买牛熊证
     buyCbbcETH, //用ETH购买牛熊证
@@ -407,8 +445,11 @@ export default {
     rebase, //rebase
     getTotalLiabilities, //显示流动性收益
     getLiquilityBalance, //获取流动性份额
+    getETHLiquilityBalance, //获取ETH流动性份额
     addLiquidity, //添加流动性
+    addLiquidityETH, //用ETH添加流动性
     removeLiquidity, //移除流动性
+    removeLiquidityETH, //eth移除流动性
     connectWallet, //连接钱包
     getAccount,
 }
