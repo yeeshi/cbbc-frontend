@@ -410,6 +410,6 @@ export default {
     addLiquidity, //添加流动性
     removeLiquidity, //移除流动性
     connectWallet, //连接钱包
-    getAccount
+    getAccount,
 }
 

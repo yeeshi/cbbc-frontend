@@ -112,16 +112,22 @@ export default {
   watch:{
     settle(val){
       (async()=>{
-        let settleToken = await helper.settleTokenList;
-        var addr = "";
-        for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name == this.settle){
-            addr = settleToken[i].address;
+        if (val == 'ETH'){
+          await helper.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
+                this.Balance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
+            });
+        }else{
+          let settleToken = await helper.settleTokenList;
+          var addr = "";
+          for(let i=0;i<settleToken.length;i++){
+            if(settleToken[i].name == this.settle){
+              addr = settleToken[i].address;
+            }
           }
+          this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+          this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
         }
-        this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
-        this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
-        console.log(this.allow);
+        
       })();
     },
     '$store.state.defaultAccount': function () {
@@ -135,7 +141,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
-
+        this.currencies.push('ETH');
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
     },
@@ -174,7 +180,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
-
+        this.currencies.push('ETH');  
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
       
@@ -212,17 +218,7 @@ export default {
     },
     handleSubmit(){
       (async()=>{
-        
         this.VerifiedLoading = true;
-        var trickNumber = this.ticksLabels[this.ticks];
-        let settleToken = await helper.settleTokenList;
-        var settleAddr = "";
-        for(let i=0;i<settleToken.length;i++){
-          if(settleToken[i].name == this.settle){
-            settleAddr = settleToken[i].address;
-          }
-        }
-
         let tradeToken = await helper.tradeTokenList;
         var tradeAddr = "";
         for(let i=0;i<tradeToken.length;i++){
@@ -230,22 +226,43 @@ export default {
             tradeAddr = tradeToken[i].address;
           }
         }
-        helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
-          this.VerifiedLoading = false;
-          this.verified = false;
-          (async()=>{
-            let settleToken = await helper.settleTokenList;
-            var addr = "";
-            for(let i=0;i<settleToken.length;i++){
-              if(settleToken[i].name == this.settle){
-                addr = settleToken[i].address;
-              }
+        var trickNumber = this.ticksLabels[this.ticks];
+        if (this.settle == 'ETH'){
+          helper.buyCbbcETH(tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
+              this.VerifiedLoading = false;
+              this.verified = false;
+              (async()=>{
+                await helper.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
+                    this.Balance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
+                });
+              })();
+            }); 
+        }else{
+          
+          let settleToken = await helper.settleTokenList;
+          var settleAddr = "";
+          for(let i=0;i<settleToken.length;i++){
+            if(settleToken[i].name == this.settle){
+              settleAddr = settleToken[i].address;
             }
-            this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
-          })();
-        }); 
+          }
+          helper.buyCbbc(settleAddr,tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
+              this.VerifiedLoading = false;
+              this.verified = false;
+              (async()=>{
+                let settleToken = await helper.settleTokenList;
+                var addr = "";
+                for(let i=0;i<settleToken.length;i++){
+                  if(settleToken[i].name == this.settle){
+                    addr = settleToken[i].address;
+                  }
+                }
+                this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+              })();
+            }); 
+          }
       })();
-      
+
     }
   },
   beforeDestroy () {
