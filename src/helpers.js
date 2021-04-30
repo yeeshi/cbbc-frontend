@@ -31,8 +31,11 @@ let cbbc = [];  //[{string name,string address,object instance}]
     console.log(await getETHLiquilityBalance('0xC0bE234aA298e132dAe278CC7ddD659270F386E2'));
 })();
 
-ethereum.on('accountsChanged', handleAccountsChanged);
-ethereum.on('chainChanged', handleChainChanged);
+if(typeof ethereum !== 'undefined') {
+    ethereum.on('accountsChanged', handleAccountsChanged);
+    ethereum.on('chainChanged', handleChainChanged);
+}
+
 async function handleChainChanged(id) {
     
 }
@@ -101,7 +104,10 @@ async function approveETHLiquidityToken(amount, ownerAddress, callback, onConfir
     });
 }
 
-async function getSignature(amount, ownerAddress) {
+
+//arguments: string amount, string ownerAddress, function callback(obj signature, string deadline)
+async function getSignature(amount, ownerAddress, callback) {
+    let deadline = getDeadline();
     const msgParams = JSON.stringify({
         domain: {
             chainId: await ethereum.request({ method: 'eth_chainId' }),
@@ -114,8 +120,8 @@ async function getSignature(amount, ownerAddress) {
             owner: ownerAddress,
             spender: cbbcRouterAddress,
             value: toWei(amount),
-            nonce: "0",
-            deadline: getDeadline()
+            // nonce: "0",
+            deadline: deadline
         },
         primaryType: 'Permit',
         types: {
@@ -128,9 +134,9 @@ async function getSignature(amount, ownerAddress) {
             Permit: [
                 { name: 'owner', type: 'address' },
                 { name: 'spender', type: 'address' },
-                { name: 'value', type: 'uint256' },
-                { name: 'nonce', type: 'uint256' },
-                { name: 'deadline', type: 'uint256' }
+                { name: 'value', type: 'uint' },
+                // { name: 'nonce', type: 'uint256' },
+                { name: 'deadline', type: 'uint' }
             ]
         },
     });
@@ -141,7 +147,7 @@ async function getSignature(amount, ownerAddress) {
         from:ownerAddress}, 
         function (err, result) {
             let vrs = splitSignature(result.result);
-            return vrs;
+            callback(vrs, deadline) ;
     });
 }
 
@@ -195,6 +201,33 @@ async function buyCbbcETH(tradeTokenAddr, leverage, type, amount, ownerAddress, 
     });
 }
 
+async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, signature, deadline, callback, onConfirm) {
+    let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
+    let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
+    let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
+    let leverage = await cbbcInstance.methods.leverage().call();
+    let cbbcType = await cbbcInstance.methods.cbbcType().call();
+
+        axios.get(priceDataServer)
+        .then(function(response) {
+            if(response.status == 200) {
+                let priceData = response.data;
+                    cbbcRouterInstance.methods.sellCbbcWithPermit(
+                        [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
+                        settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
+                        [0, signature.v, signature.r, signature.s]
+                    ).send({from: ownerAddress}, async function(error, transactionHash){
+                        callback(error, transactionHash);
+                    }).once('confirmation', function(confNumber, receipt){
+                        onConfirm(confNumber, receipt);
+                    });
+            }
+            else {
+                console.error(response);
+                callback(response.status, transactionHash);
+            }
+        });
+}
 
 //string cbbcAddr, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function sellCbbc(cbbcAddr, amount, ownerAddress, callback, onConfirm) {
