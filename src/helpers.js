@@ -28,6 +28,7 @@ const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
 (async () => {
+    console.log(await getETHLiquilityBalance('0xC0bE234aA298e132dAe278CC7ddD659270F386E2'));
 })();
 
 ethereum.on('accountsChanged', handleAccountsChanged);
