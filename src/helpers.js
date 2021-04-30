@@ -34,7 +34,6 @@ window.addEventListener('load', function() {
         ethereum.on('accountsChanged', handleAccountsChanged);
         ethereum.on('chainChanged', handleChainChanged);
     }else{
-        console.log('undefine');
     }
 });
 
@@ -63,7 +62,9 @@ function toEth(amount) {
     return (parseFloat(amount) / Math.pow(10, 18)).toString();
 }
 
-
+function IsWalletInstalled(){
+    return typeof ethereum !== 'undefined';
+}
 //argument: string ownerAddress
 async function getETHBalance(ownerAddress,callback) {
     web3.eth.getBalance(ownerAddress, (err, balance) => {
@@ -469,6 +470,7 @@ function getAccount(accountHandler) { //获取用户账户
 export default {
     settleTokenList,
     tradeTokenList,
+    IsWalletInstalled,
     getETHBalance, //获取用户ETH数量
     allowance, //获取授权通证数量
     approveToken,  //授权通证

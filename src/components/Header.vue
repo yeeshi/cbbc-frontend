@@ -60,7 +60,7 @@
                         <img src="../assets/metamask-fox.svg" alt="fox">
                     </div>
                     <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">Metamask</p>
-                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
+                    <v-btn @click="handleUnlock" :disabled="!walletInstalled" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">{{walletInstalled? "连接":"请先安装插件"}}</span></v-btn>
                 </div>
                 <div class="ml-2 d-inline-flex align-center flex-column pt-3 pb-3 pl-3 pr-3" style="border: 1px solid rgb(226, 214, 207); border-radius: 12px; box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; width: 50%;">
                     <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
@@ -120,17 +120,20 @@ export default {
         overlay: false, /// 显示遮罩
         chainMap,
         eth:0,
+        walletInstalled:true,
       }
   },
   mounted () {
-      this.onResize();
-      window.addEventListener('resize', this.onResize, { passive: true });
-     
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+    this.walletInstalled = helper.IsWalletInstalled();
+    if (this.walletInstalled){
         helper.getAccount((account)=>{
-        if(account.length>0){
-            this.handleUnlock();
-        }
-      });
+            if(account.length>0){
+                this.handleUnlock();
+            }
+        });
+    }
      
       
   },
