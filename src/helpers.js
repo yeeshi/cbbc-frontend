@@ -28,13 +28,16 @@ const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
 (async () => {
-    console.log(await getETHLiquilityBalance('0xC0bE234aA298e132dAe278CC7ddD659270F386E2'));
 })();
+window.addEventListener('load', function() {
+    if (typeof ethereum !== 'undefined') {
+        ethereum.on('accountsChanged', handleAccountsChanged);
+        ethereum.on('chainChanged', handleChainChanged);
+    }else{
+        console.log('undefine');
+    }
+});
 
-if(typeof ethereum !== 'undefined') {
-    ethereum.on('accountsChanged', handleAccountsChanged);
-    ethereum.on('chainChanged', handleChainChanged);
-}
 
 async function handleChainChanged(id) {
     

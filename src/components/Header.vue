@@ -125,11 +125,14 @@ export default {
   mounted () {
       this.onResize();
       window.addEventListener('resize', this.onResize, { passive: true });
-      helper.getAccount((account)=>{
+     
+        helper.getAccount((account)=>{
         if(account.length>0){
             this.handleUnlock();
         }
       });
+     
+      
   },
   watch: {
       '$store.state.defaultAccount': function (val) {
