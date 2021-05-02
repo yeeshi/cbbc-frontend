@@ -330,7 +330,7 @@ export default {
     handleLiquidityVerify(){
       (async()=>{
         this.LiquidityVerifingLoading = true;
-        if (liquityChoose == 'ETH'){
+        if (this.liquityChoose == 'ETH'){
           var err,hash = helpers.approveETHLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
@@ -400,7 +400,7 @@ export default {
     handleRemoveConfirm(){
       (async()=>{
         this.VerifiedLoading = true;
-        if (liquityChoose == 'ETH'){
+        if (this.liquityChoose == 'ETH'){
           helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
