@@ -126,24 +126,11 @@ export default {
           }
           this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
           this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
-        }
-        
+        }     
       })();
     },
     '$store.state.defaultAccount': function () {
-      (async()=>{
-        let settleToken = await helper.settleTokenList;
-        let tradeToken = await helper.tradeTokenList;
-        for(let i=0;i<settleToken.length;i++)
-          this.currencies.push(settleToken[i].name);
-        for(let i=0;i<tradeToken.length;i++)
-          this.items.push(tradeToken[i].name);
-        
-        this.settle = settleToken[0].name;
-        this.trade = tradeToken[0].name;
-        this.currencies.push('ETH');
-        this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
-      })();
+      this.handleRefreshData();
     },
     input1(val){
       if (this.settle != 'ETH'){
@@ -153,7 +140,6 @@ export default {
           this.verified = true;
         }
       }
-      
     }
   },
   components: {
@@ -173,6 +159,10 @@ export default {
    mounted () {
       this.onResize();
       window.addEventListener('resize', this.onResize, { passive: true });
+      this.handleRefreshData();
+  },
+  methods: {
+    handleRefreshData(){
       (async()=>{
         let settleToken = await helper.settleTokenList;
         let tradeToken = await helper.tradeTokenList;
@@ -186,9 +176,7 @@ export default {
         this.currencies.push('ETH');  
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
-      
-  },
-  methods: {
+    },
     handleTabChange(index) {
       this.currentIndex = index
     },
@@ -244,7 +232,6 @@ export default {
               })();
             }); 
         }else{
-          
           let settleToken = await helper.settleTokenList;
           var settleAddr = "";
           for(let i=0;i<settleToken.length;i++){

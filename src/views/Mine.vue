@@ -99,7 +99,7 @@
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供份流动性</p></div>
             </v-container>
-            <v-btn block :loading="isVerifingLoading" v-show="!isVerified" @click="handleVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isVerifingLoading" v-show="!isVerified" @click="handleAddVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
             <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
@@ -130,8 +130,8 @@
                 </v-subheader>
               </div>
             </v-container>
-            <v-btn block :loading="isLiquidityVerifingLoading" :disabled="isLiquidityVerified" @click="handleLiquidityVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
-            <v-btn block :loading="isLiquidityVerifiedLoading" :disabled="!isLiquidityVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block :loading="isremoveVerifingLoading" :disabled="isclearVerified" @click="handleClearVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isclearVerifiedLoading" :disabled="!isclearVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -162,12 +162,12 @@ export default {
       inputAdd: '',
       inputRemove: '',
       coin:'',
-      VerifingLoading:false,
-      VerifiedLoading:false,
-      verified:false,
-      LiquidityVerifingLoading:false,
-      LiquidityVerifiedLoading:false,
-      LiquidityVerified:false,
+      addVerifingLoading:false,
+      addVerifiedLoading:false,
+      addVerified:false,
+      clearVerifingLoading:false,
+      clearVerifiedLoading:false,
+      clearVerified:false,
       settleBalance:0,
       liquity:[],
       liquityType:['Token','ETH'],
@@ -177,44 +177,29 @@ export default {
   },
   computed: {
     isVerified: function(){
-      return this.verified;
+      return this.addVerified;
     },
     isVerifingLoading: function(){
-      return this.VerifingLoading;
+      return this.addVerifingLoading;
     },
     isVerifiedLoading: function(){
-      return this.VerifiedLoading;
+      return this.addVerifiedLoading;
     },
-    isLiquidityVerified: function(){
-      return this.LiquidityVerified;
+    isclearVerified: function(){
+      return this.clearVerified;
     },
-    isLiquidityVerifingLoading: function(){
-      return this.LiquidityVerifingLoading;
+    isremoveVerifingLoading: function(){
+      return this.clearVerifingLoading;
     },
-    isLiquidityVerifiedLoading: function(){
-      return this.LiquidityVerifiedLoading;
+    isclearVerifiedLoading: function(){
+      return this.clearVerifiedLoading;
     }
   },
   mounted () {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
-    (async()=>{
-      let settleToken = await helpers.settleTokenList;
-      for(let i=0;i<settleToken.length;i++)
-        this.coinType.push(settleToken[i].name);
-
-      let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
-      let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
-
-      this.liquity.push(tokenLiquity);
-      this.liquity.push(ETHLiquity);
-      console.log(ETHLiquity);
-      
-      this.totalLiquidity = Number(tokenLiquity) + Number(ETHLiquity);
-      this.coin = settleToken[0].name;
-      this.coinType.push('ETH'); 
-    })();
-      this.handleGetAccout();
+    this.handleRefreshData()
+    this.handleGetAccout();
   },
   watch: {
     '$store.state.defaultAccount': function () {
@@ -233,7 +218,7 @@ export default {
           await helpers.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
                 this.settleBalance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
             });
-            this.verified = true;
+            this.addVerified = true;
         }else{
           let settleToken = await helpers.settleTokenList;
           var addr = "";
@@ -271,7 +256,6 @@ export default {
     },
     handleRefreshData(){
       (async()=>{
-        
         let settleToken = await helpers.settleTokenList;
         for(let i=0;i<settleToken.length;i++)
           this.coinType.push(settleToken[i].name);
@@ -302,9 +286,9 @@ export default {
       this.isClearShow = true
     },
     ///验证添加流动
-    handleVerify(){
+    handleAddVerify(){
       (async()=>{
-        this.VerifingLoading = true;
+        this.addVerifingLoading = true;
         let settleToken = await helpers.settleTokenList;
         var addr = "";
         for(let i=0;i<settleToken.length;i++){
@@ -317,40 +301,40 @@ export default {
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
-              this.VerifingLoading = false;
+              this.addVerifingLoading = false;
             }
             
           },(confNumber, receipt)=>{
-            this.verified = true;
-            this.VerifingLoading = false;
+            this.addVerified = true;
+            this.addVerifingLoading = false;
           });
       })();
     },
     ///验证移除流动
-    handleLiquidityVerify(){
+    handleClearVerify(){
       (async()=>{
-        this.LiquidityVerifingLoading = true;
+        this.clearVerifingLoading = true;
         if (this.liquityChoose == 'ETH'){
           var err,hash = helpers.approveETHLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
-              this.LiquidityVerifingLoading = false;
+              this.clearVerifingLoading = false;
             }
           },(confNumber, receipt)=>{
-              this.LiquidityVerified = true;
-              this.LiquidityVerifingLoading = false;
+              this.clearVerified = true;
+              this.clearVerifingLoading = false;
           });
         }else{
           var err,hash = helpers.approveLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
-              this.LiquidityVerifingLoading = false;
+              this.clearVerifingLoading = false;
             }
           },(confNumber, receipt)=>{
-              this.LiquidityVerified = true;
-              this.LiquidityVerifingLoading = false;
+              this.clearVerified = true;
+              this.clearVerifingLoading = false;
           });
         }
         
@@ -358,20 +342,9 @@ export default {
     },
     handleAddConfirm(){
       (async()=>{
-        this.VerifiedLoading = true;
+        this.addVerifiedLoading = true;
         if(this.coin=='ETH'){
-          helpers.addLiquidityETH(this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
-            if(error!=null){
-              this.VerifiedLoading = false;
-            }
-          },(confNumber, receipt)=>{
-            this.VerifiedLoading = false;
-            this.verified = false;
-            if (confNumber == 0){
-              this.isAddSHow = false;
-              this.handleRefreshData();
-            }
-          });
+          helpers.addLiquidityETH(this.inputAdd,this.$store.state.defaultAccount,handleTXCallBack,handleAddTXConfirmCallBack);
         }else{
           let settleToken = await helpers.settleTokenList;
           var settleAddr = "";
@@ -380,48 +353,44 @@ export default {
               settleAddr = settleToken[i].address;
             }
           }
-          helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,(error, transactionHash)=>{
-            if(error!=null){
-              this.VerifiedLoading = false;
-            }
-            
-          },(confNumber, receipt)=>{
-            this.VerifiedLoading = false;
-            this.verified = false;
-            if (confNumber == 0){
-              this.isAddSHow = false;
-              this.handleRefreshData();
-            }
-          });
+          helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,handleTXCallBack,handleAddTXConfirmCallBack);
         }
         
       })(); 
     },
     handleRemoveConfirm(){
       (async()=>{
-        this.VerifiedLoading = true;
+        this.addVerifiedLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
-          this.VerifiedLoading = false;
-          this.verified = false;
-          if (confNumber == 0){
-            this.isClearShow = false;
-            this.handleRefreshData();
-          }
-        });
+          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,handleTXCallBack,handleClearTXConfirm);
         }else{
-          helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,(error, transactionHash)=>{},(confNumber, receipt)=>{
-          this.VerifiedLoading = false;
-          this.verified = false;
-          if (confNumber == 0){
-            this.isClearShow = false;
-            this.handleRefreshData();
-          }
-        });
-        }
-        
+          helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,handleTXCallBack,handleClearTXConfirm);
+        }  
       })(); 
-    }
+    },
+    handleAddTXConfirmCallBack(confNumber, receipt){
+      this.addVerifiedLoading = false;
+      this.addVerified = false;
+      if (confNumber == 0){
+        this.isAddSHow = false;
+        this.handleRefreshData();
+      }
+    },
+    handleTXCallBack(error, transactionHash){
+      if (error!= null){
+        console.log(error);
+        this.addVerifiedLoading = false;
+      }
+      
+    },
+    handleClearTXConfirmCallBack(confNumber, receipt){
+        this.addVerifiedLoading = false;
+        this.addVerified = false;
+        if (confNumber == 0){
+          this.isClearShow = false;
+          this.handleRefreshData();
+        }
+    },
   },
   beforeDestroy () {
     if (typeof window === 'undefined') return

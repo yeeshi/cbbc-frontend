@@ -97,8 +97,7 @@ export default {
         { text: 'rebase目标价', align: 'start', sortable: false, value: 'clearingPrice', },
         { text: '操作', align: 'center', sortable: false, value: 'cz' },
       ],
-      desserts: [
-      ],
+      desserts: [],
       max:0,
       VerifingLoading:false,
       VerifiedLoading:false,
@@ -114,7 +113,6 @@ export default {
     },
     slider1(val){
       let temp = (val/100)*Number(this.max);
-      console.log(Number(this.max));
       this.input1 = temp;
     }
   },
@@ -166,7 +164,6 @@ export default {
         element=>{
         if (element.id == id){
           this.max = element.portion;
-          console.log(element);
         }
       }
       );
