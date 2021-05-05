@@ -397,7 +397,7 @@ async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onCo
 }
 
 async function addLiquidityETH(amount, ownerAddress,callback, onConfirm) {
-    cbbcRouterInstance.methods.addLiquidityETH(toWei(amount), ownerAddress, getDeadline())
+    cbbcRouterInstance.methods.addLiquidityETH(ownerAddress, getDeadline())
     .send({from: ownerAddress, value:toWei(amount)}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
