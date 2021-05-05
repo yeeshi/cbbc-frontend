@@ -344,7 +344,7 @@ export default {
       (async()=>{
         this.addVerifiedLoading = true;
         if(this.coin=='ETH'){
-          helpers.addLiquidityETH(this.inputAdd,this.$store.state.defaultAccount,handleTXCallBack,handleAddTXConfirmCallBack);
+          helpers.addLiquidityETH(this.inputAdd,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleAddTXConfirmCallBack);
         }else{
           let settleToken = await helpers.settleTokenList;
           var settleAddr = "";
@@ -353,7 +353,7 @@ export default {
               settleAddr = settleToken[i].address;
             }
           }
-          helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,handleTXCallBack,handleAddTXConfirmCallBack);
+          helpers.addLiquidity(settleAddr,this.inputAdd,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleAddTXConfirmCallBack);
         }
         
       })(); 
@@ -362,9 +362,9 @@ export default {
       (async()=>{
         this.addVerifiedLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,handleTXCallBack,handleClearTXConfirm);
+          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirm);
         }else{
-          helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,handleTXCallBack,handleClearTXConfirm);
+          helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirm);
         }  
       })(); 
     },

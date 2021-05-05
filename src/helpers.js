@@ -8,11 +8,11 @@ import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 
-const cbbcFactoryAddress = "0x76183De81825a2e53E258D1e14334A92f061aC51";
-const cbbcRouterAddress = "0x2cd07277df88cb8AC76847aA87baAB9A08e5c944";
+const cbbcFactoryAddress = "0x9AE915DA96117094E0e06880c8e5Ec23551c7c82";
+const cbbcRouterAddress = "0xeE32eFAACe4a95d93376E0F9B5fe3AB642630ce3";
 const wethAddress = "0x9F4B99590B6577C4515BF314597B6D4dCA8af45A";
-const liquidityTokenAddress = "0x6398b2bAC8f6AcC8A4726669b37a7473Ea34ce19";
-const ETHLiquidityTokenAddress = "0x47d6B7e92682E2286d5D1146b305f7EF6AE48b92";
+const liquidityTokenAddress = "0x53ccFB76825F02D3c065AdE948BCfB7b5653A7d6";
+const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
 const orchestratorAddress = "0x48A6455D399c77193424C23E1349aC11445f2c7a";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
@@ -27,6 +27,7 @@ const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestrato
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
+
 (async () => {
 })();
 window.addEventListener('load', function() {
@@ -124,7 +125,7 @@ async function getSignature(amount, ownerAddress, callback) {
             owner: ownerAddress,
             spender: cbbcRouterAddress,
             value: toWei(amount),
-            // nonce: "0",
+            nonce: "0",
             deadline: deadline
         },
         primaryType: 'Permit',
@@ -139,19 +140,17 @@ async function getSignature(amount, ownerAddress, callback) {
                 { name: 'owner', type: 'address' },
                 { name: 'spender', type: 'address' },
                 { name: 'value', type: 'uint' },
-                // { name: 'nonce', type: 'uint256' },
+                { name: 'nonce', type: 'uint256' },
                 { name: 'deadline', type: 'uint' }
             ]
         },
     });
     
-    web3.currentProvider.send({
-        method: 'eth_signTypedData_v4',
-        params: [ownerAddress, msgParams],
-        from:ownerAddress}, 
+    web3.currentProvider.send(
+        {method: 'eth_signTypedData_v4', params: [ownerAddress, msgParams], from:ownerAddress}, 
         function (err, result) {
-            let vrs = splitSignature(result.result);
-            callback(vrs, deadline) ;
+            let permitData = splitSignature(result.result);
+            callback(permitData, deadline);
     });
 }
 
@@ -205,33 +204,6 @@ async function buyCbbcETH(tradeTokenAddr, leverage, type, amount, ownerAddress, 
     });
 }
 
-async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, signature, deadline, callback, onConfirm) {
-    let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
-    let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
-    let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
-    let leverage = await cbbcInstance.methods.leverage().call();
-    let cbbcType = await cbbcInstance.methods.cbbcType().call();
-
-        axios.get(priceDataServer)
-        .then(function(response) {
-            if(response.status == 200) {
-                let priceData = response.data;
-                    cbbcRouterInstance.methods.sellCbbcWithPermit(
-                        [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
-                        settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
-                        [0, signature.v, signature.r, signature.s]
-                    ).send({from: ownerAddress}, async function(error, transactionHash){
-                        callback(error, transactionHash);
-                    }).once('confirmation', function(confNumber, receipt){
-                        onConfirm(confNumber, receipt);
-                    });
-            }
-            else {
-                console.error(response);
-                callback(response.status, transactionHash);
-            }
-        });
-}
 
 //string cbbcAddr, string amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function sellCbbc(cbbcAddr, amount, ownerAddress, callback, onConfirm) {
@@ -278,6 +250,59 @@ async function sellCbbc(cbbcAddr, amount, ownerAddress, callback, onConfirm) {
         });
     }
 }
+
+
+async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, deadline, permit, callback, onConfirm) {
+    let cbbcInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
+    let settleTokenAddr = await cbbcInstance.methods.settleToken().call();
+    let tradeTokenAddr = await cbbcInstance.methods.tradeToken().call();
+    let leverage = await cbbcInstance.methods.leverage().call();
+    let cbbcType = await cbbcInstance.methods.cbbcType().call();
+
+    if(settleTokenAddr == wethAddress) {
+        axios.get(wethDataServer)
+        .then(function(response) {
+            if(response.status == 200) {
+                let priceData = response.data;
+                    cbbcRouterInstance.methods.sellCbbcETHWithPermit(
+                        [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
+                        tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
+                        [0, permit.v, permit.r, permit.s]
+                    ).send({from: ownerAddress}, async function(error, transactionHash){
+                        callback(error, transactionHash);
+                    }).once('confirmation', function(confNumber, receipt){
+                        onConfirm(confNumber, receipt);
+                    });
+            }
+            else {
+                console.error(response);
+                callback(response.status, transactionHash);
+            }
+        });
+    }
+    else {
+        axios.get(priceDataServer)
+        .then(function(response) {
+            if(response.status == 200) {
+                let priceData = response.data;
+                    cbbcRouterInstance.methods.sellCbbcWithPermit(
+                        [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
+                        settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
+                        [0, permit.v, permit.r, permit.s]
+                    ).send({from: ownerAddress}, async function(error, transactionHash){
+                        callback(error, transactionHash);
+                    }).once('confirmation', function(confNumber, receipt){
+                        onConfirm(confNumber, receipt);
+                    });
+            }
+            else {
+                console.error(response);
+                callback(response.status, transactionHash);
+            }
+        });
+    }
+}
+
 
 // return: [{address: string, name: string}]
 async function getTradeTokenList() { 
