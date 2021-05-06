@@ -130,7 +130,7 @@
                 </v-subheader>
               </div>
             </v-container>
-            <v-btn block :loading="isremoveVerifingLoading" :disabled="isclearVerified" @click="handleClearVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isremoveVerifingLoading" v-show="!isclearVerified" @click="handleClearVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
             <v-btn block :loading="isclearVerifiedLoading" :disabled="!isclearVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
@@ -173,6 +173,7 @@ export default {
       liquityType:['Token','ETH'],
       liquityChoose:'Token',
       liquidityNumber:0,
+      AddAllow:0,
     }
   },
   computed: {
@@ -221,6 +222,7 @@ export default {
             this.addVerified = true;
         }else{
           let settleToken = await helpers.settleTokenList;
+          this.addVerified = false;
           var addr = "";
           for(let i=0;i<settleToken.length;i++){
             if(settleToken[i].name == this.coin){
@@ -228,18 +230,28 @@ export default {
             }
           }
           this.settleBalance = await helpers.getBalance(addr,this.$store.state.defaultAccount);
+          this.AddAllow = await helpers.allowance(addr,this.$store.state.defaultAccount);
         }
       })();
-      },
-      liquityChoose(val){
-        if(val == 'ETH'){
-          this.liquidityNumber = this.liquity[1];
-
+    },
+    liquityChoose(val){
+      if(val == 'ETH'){
+        this.liquidityNumber = this.liquity[1];
+      }else{
+        this.liquidityNumber = this.liquity[0];
+      }
+    },
+    inputAdd(val){
+      if (this.settle != 'ETH'){
+        console.log(this.AddAllow);
+        if (val>this.AddAllow){
+          this.addVerified = false;
         }else{
-          this.liquidityNumber = this.liquity[0];
+          this.addVerified = true;
         }
       }
-    
+    }
+  
   },
   methods: {
     onResize () {
@@ -262,6 +274,8 @@ export default {
         
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
+
+        console.log(tokenLiquity);
 
         this.liquity.push(tokenLiquity);
         this.liquity.push(ETHLiquity);

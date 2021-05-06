@@ -193,6 +193,7 @@ export default {
             addr = settleToken[i].address;
           }
         }
+        console.log(this.Balance);
         var err,hash = helper.approveToken(addr,this.Balance,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
@@ -203,7 +204,6 @@ export default {
             this.verified = true;
             this.VerifingLoading = false;
             this.allow = await helper.allowance(addr,this.$store.state.defaultAccount);
-            
           });
       })();
     },

@@ -133,9 +133,7 @@ export default {
                 this.handleUnlock();
             }
         });
-    }
-     
-      
+    }  
   },
   watch: {
       '$store.state.defaultAccount': function (val) {
