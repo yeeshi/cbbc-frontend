@@ -190,7 +190,7 @@ async function buyCbbcETH(tradeTokenAddr, leverage, type, amount, ownerAddress, 
         if(response.status == 200) {
             let priceData = response.data;
             let data = cbbcRouterInstance.methods.buyCbbcETH([priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
-                                                                tradeTokenAddr, leverage, type, toWei(amount), ownerAddress, getDeadline()).encodeABI();
+                                                                tradeTokenAddr, leverage, type, ownerAddress, getDeadline()).encodeABI();
             web3.eth.sendTransaction({to:cbbcRouterAddress, from:ownerAddress, data: data, value: toWei(amount)}, async function(error, transactionHash){
                 callback(error, transactionHash);
             }).once('confirmation', function(confNumber, receipt){
