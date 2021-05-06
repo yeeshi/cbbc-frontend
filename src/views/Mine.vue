@@ -119,7 +119,7 @@
                   v-model="liquityChoose"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">持有份额: {{liquidityNumber}}</p></div>
+              <p class="mb-0 text-caption">持有份额: {{String(liquidityNumber).replace(/^(.*\..{4}).*$/,"$1")}}</p></div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
@@ -170,8 +170,8 @@ export default {
       clearVerified:false,
       settleBalance:0,
       liquity:[],
-      liquityType:['Token','ETH'],
-      liquityChoose:'Token',
+      liquityType:[],
+      liquityChoose:'',
       liquidityNumber:0,
       AddAllow:0,
     }
@@ -208,8 +208,11 @@ export default {
         let settleToken = await helpers.settleTokenList;
         for(let i=0;i<settleToken.length;i++)
           this.coinType.push(settleToken[i].name);
-        
-        this.totalLiquidity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+
+        let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+        let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
+
+        this.totalLiquidity = tokenLiquity +ETHLiquity;
         this.coin = settleToken[0].name;    
       })();
     },
@@ -235,10 +238,10 @@ export default {
       })();
     },
     liquityChoose(val){
-      if(val == 'ETH'){
-        this.liquidityNumber = this.liquity[1];
-      }else{
-        this.liquidityNumber = this.liquity[0];
+      for(var i =0;i<this.liquityType.length;i++){
+        if (this.liquityType[i] == val){
+          this.liquidityNumber = this.liquity[i];
+        }
       }
     },
     inputAdd(val){
@@ -269,16 +272,19 @@ export default {
     handleRefreshData(){
       (async()=>{
         let settleToken = await helpers.settleTokenList;
-        for(let i=0;i<settleToken.length;i++)
-          this.coinType.push(settleToken[i].name);
-        
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
-        console.log(tokenLiquity);
+        for(let i=0;i<settleToken.length;i++){
+          this.coinType.push(settleToken[i].name);
+          this.liquityType.push(settleToken[i].name);
+          this.liquity.push(tokenLiquity);
+        }
 
-        this.liquity.push(tokenLiquity);
+        this.liquityType.push('ETH');
         this.liquity.push(ETHLiquity);
+        this.liquidityNumber = tokenLiquity;
+        this.liquityChoose = settleToken[0].name;
         
         this.totalLiquidity = Number(tokenLiquity) + Number(ETHLiquity);
         this.coin = settleToken[0].name;
@@ -293,7 +299,7 @@ export default {
       this.inputAdd = this.settleBalance
     },
     handleAddMax() {
-      this.inputRemove = this.totalLiquidity
+      this.inputRemove = this.liquidityNumber
     },
     /// 清除流动
     handleClear() {
@@ -374,11 +380,20 @@ export default {
     },
     handleRemoveConfirm(){
       (async()=>{
-        this.addVerifiedLoading = true;
+        this.clearVerifiedLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirm);
+          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
         }else{
-          helpers.removeLiquidity(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirm);
+          let settleToken = await helpers.settleTokenList;
+          var settleAddr = "";
+          for(let i=0;i<settleToken.length;i++){
+            if(settleToken[i].name == this.liquityChoose){
+              settleAddr = settleToken[i].address;
+            }
+          }
+          console.log(settleToken);
+          console.log(settleAddr);
+          helpers.removeLiquidity(settleAddr,this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
         }  
       })(); 
     },
@@ -398,8 +413,9 @@ export default {
       
     },
     handleClearTXConfirmCallBack(confNumber, receipt){
-        this.addVerifiedLoading = false;
-        this.addVerified = false;
+        this.clearVerifiedLoading = false;
+        this.clearVerified = false;
+        console.log(confNumber)
         if (confNumber == 0){
           this.isClearShow = false;
           this.handleRefreshData();
