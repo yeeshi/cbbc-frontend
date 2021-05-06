@@ -27,7 +27,7 @@ const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestrato
 const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
-
+    
 (async () => {
 })();
 window.addEventListener('load', function() {
@@ -407,9 +407,8 @@ async function addLiquidityETH(amount, ownerAddress,callback, onConfirm) {
 
 
 //arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
-async function removeLiquidity(amount, ownerAddress, callback, onConfirm) {
+async function removeLiquidity(settleTokenAddr, amount, ownerAddress, callback, onConfirm) {
     //TODO: add advance mode for user to choose amountMin instead of 0
-    let settleTokenAddr = await liquidityTokenInstance.methods.settleToken().call();
     cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
@@ -436,7 +435,7 @@ async function getLiquilityBalance(ownerAddress) {
 }
 
 async function getETHLiquilityBalance(ownerAddress) {
-    let amount = await liquidityTokenInstance.methods.balanceOf(ownerAddress).call();
+    let amount = await ETHLiquidityTokenInstance.methods.balanceOf(ownerAddress).call();
     return toEth(amount);
 }
 
