@@ -246,7 +246,6 @@ export default {
     },
     inputAdd(val){
       if (this.settle != 'ETH'){
-        console.log(this.AddAllow);
         if (val>this.AddAllow){
           this.addVerified = false;
         }else{
@@ -391,8 +390,6 @@ export default {
               settleAddr = settleToken[i].address;
             }
           }
-          console.log(settleToken);
-          console.log(settleAddr);
           helpers.removeLiquidity(settleAddr,this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
         }  
       })(); 
@@ -415,7 +412,6 @@ export default {
     handleClearTXConfirmCallBack(confNumber, receipt){
         this.clearVerifiedLoading = false;
         this.clearVerified = false;
-        console.log(confNumber)
         if (confNumber == 0){
           this.isClearShow = false;
           this.handleRefreshData();
