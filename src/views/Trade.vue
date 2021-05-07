@@ -80,6 +80,20 @@
             <div style="line-height: 1.5rem; color: #767676de;" class="d-flex text-overline justify-space-between"><p class="mb-0">低清算价:</p> <p class="mb-0 black--text">615 UDST</p></div>
           </v-container>
           </div>
+
+          <v-dialog
+            v-model="isShowDialog"
+            overlay-color="rgba(91, 57, 38, 0.667)"
+            :width="isMobile? '': '520px'"
+          >
+            <v-card style="background: rgb(240, 233, 231);">
+              <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
+              <v-container class="pl-5 pr-5 pb-5">
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在ETHERSCAN上查看</v-btn>
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
+              </v-container>
+            </v-card>
+          </v-dialog>
           
         </div>
       </div>
@@ -92,23 +106,35 @@ import vHeader from '@/components/Header.vue'
 import helper from "../helpers"
 export default {
   name: 'Home',
-  data: () => ({
-    isMobile: true,
-    tabs: [{ label: "牛证开仓" }, { label: "熊证开仓" }],
-    currentIndex: 0,
-    items: [],
-    currencies: [],
-    ticksLabels: ["1", "2", "3", "5", "10", "20"],
-    input1: '',
-    verified:true,
-    settle:'',
-    trade:'',
-    ticks:'',
-    VerifingLoading:false,
-    VerifiedLoading:false,
-    Balance:0,
-    allow:0
-  }),
+  data () {
+      const chainMap = new Map([
+                ['0x1','Mainnet'],
+                ['0x3','Ropsten'],
+                ['0x4','Rinkeby'],
+                ['0x5','Goerli'],
+                ['0x2a','Kovan']
+            ]); 
+    return {
+      isShowDialog:false,
+      isMobile: true,
+      tabs: [{ label: "牛证开仓" }, { label: "熊证开仓" }],
+      currentIndex: 0,
+      items: [],
+      currencies: [],
+      ticksLabels: ["1", "2", "3", "5", "10", "20"],
+      input1: '',
+      verified:true,
+      settle:'',
+      trade:'',
+      ticks:'',
+      VerifingLoading:false,
+      VerifiedLoading:false,
+      Balance:0,
+      allow:0,
+      chainMap,
+      }
+    
+  },
   watch:{
     settle(val){
       (async()=>{
@@ -134,7 +160,7 @@ export default {
     },
     input1(val){
       if (this.settle != 'ETH'){
-        if (val>this.allow){
+        if (Number(val)>Number(this.allow)){
           this.verified = false;
         }else{
           this.verified = true;
@@ -182,6 +208,15 @@ export default {
     },
     onResize () {
       this.isMobile = window.innerWidth < 750
+    },
+    handleViewOnEarthscan(){
+      var id = this.$store.state.defaultAccount;
+      var chain = this.chainMap.get(this.$store.state.defaultChainId);
+      var url = "https://"+chain+".etherscan.io/address/" + id;
+      window.open(url);
+    },
+    handSuccessConfirm(){
+      this.isShowDialog=false;
     },
     handleVerify(){
       (async()=>{
@@ -246,6 +281,7 @@ export default {
           },(confNumber, receipt)=>{
               this.VerifiedLoading = false;
               this.verified = false;
+              this.isShowDialog = true;
               (async()=>{
                 let settleToken = await helper.settleTokenList;
                 var addr = "";

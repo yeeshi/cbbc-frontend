@@ -91,7 +91,7 @@
                   v-model="inputAdd"
                 ></v-text-field>
                 <v-subheader class="pl-0 pr-0" style="padding-bottom: 23px;">
-                  <v-btn color="#0483FF" @click="handleClearMax"><span class="white--text">最大</span></v-btn>
+                  <v-btn color="#0483FF" @click="handleAddMax"><span class="white--text">最大</span></v-btn>
                 </v-subheader>
               </div>
               
@@ -119,14 +119,27 @@
                   v-model="liquityChoose"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">持有份额: {{String(liquidityNumber).replace(/^(.*\..{4}).*$/,"$1")}}</p></div>
+              <p class="mb-0 text-caption">持有份额: {{String(liquidityNumber).replace(/^(.*\..{4}).*$/,"$1")}}</p>
+              </div>
+              <p class="mb-0 text-body-2">移除比例</p>
+              <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
+                <v-subheader class="pl-0 pr-0">1</v-subheader>
+                <v-slider
+                  max="100"
+                  min="1"
+                  v-model="slider1"
+                  :thumb-size="18"
+                  thumb-label="always"
+                ></v-slider>
+                <v-subheader class="pl-0 pr-0">100</v-subheader>
+              </div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
                   class="pt-0"
                   v-model="inputRemove"
                 ></v-text-field>
                 <v-subheader class="pl-0 pr-0" style="padding-bottom: 23px;">
-                  <v-btn color="#FF6871" @click="handleAddMax"><span class="white--text">最大</span></v-btn>
+                  <v-btn color="#FF6871" @click="handleClearMax"><span class="white--text">最大</span></v-btn>
                 </v-subheader>
               </div>
             </v-container>
@@ -135,6 +148,19 @@
           </v-container>
         </v-card>
       </v-dialog>
+      <v-dialog
+            v-model="isShowConfirmDialog"
+            overlay-color="rgba(91, 57, 38, 0.667)"
+            :width="isMobile? '': '520px'"
+          >
+            <v-card style="background: rgb(240, 233, 231);">
+              <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
+              <v-container class="pl-5 pr-5 pb-5">
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在ETHERSCAN上查看</v-btn>
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
+              </v-container>
+            </v-card>
+          </v-dialog>
       <v-footer></v-footer>
     </div>
 </template>
@@ -176,6 +202,8 @@ export default {
       liquityChoose:'',
       liquidityNumber:0,
       AddAllow:0,
+      slider1:1,
+      isShowConfirmDialog:false,
     }
   },
   computed: {
@@ -248,12 +276,15 @@ export default {
     },
     inputAdd(val){
       if (this.settle != 'ETH'){
-        if (val>this.AddAllow){
+        if (Number(val)>Number(this.AddAllow)){
           this.addVerified = false;
         }else{
           this.addVerified = true;
         }
       }
+    },
+    slider1(val){
+      this.inputRemove = (val/100)*this.liquidityNumber;
     }
   
   },
@@ -296,10 +327,10 @@ export default {
     handleAdd() {
       this.isAddSHow = true
     },
-    handleClearMax() {
+    handleAddMax() {
       this.inputAdd = this.settleBalance
     },
-    handleAddMax() {
+    handleClearMax() {
       this.inputRemove = this.liquidityNumber
     },
     /// 清除流动
@@ -367,6 +398,15 @@ export default {
         
       })();
     },
+    handleViewOnEarthscan(){
+      var id = this.$store.state.defaultAccount;
+      var chain = this.chainMap.get(this.$store.state.defaultChainId);
+      var url = "https://"+chain+".etherscan.io/address/" + id;
+      window.open(url);
+    },
+    handSuccessConfirm(){
+      this.isShowConfirmDialog=false;
+    },
     handleAddConfirm(){
       (async()=>{
         this.addVerifiedLoading = true;
@@ -407,6 +447,7 @@ export default {
       this.addVerified = false;
       if (confNumber == 0){
         this.isAddSHow = false;
+        this.isShowConfirmDialog=true;
         this.handleRefreshData();
       }
     },
@@ -420,8 +461,10 @@ export default {
     handleClearTXConfirmCallBack(confNumber, receipt){
         this.clearVerifiedLoading = false;
         this.clearVerified = false;
+        
         if (confNumber == 0){
           this.isClearShow = false;
+          this.isShowConfirmDialog=true;
           this.handleRefreshData();
         }
     },
