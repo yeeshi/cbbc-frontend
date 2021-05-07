@@ -29,6 +29,20 @@ const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
 (async () => {
+    // let amount = 10;
+    // let ownerAddress = "0xa28A56bbD2b9ede5A006dBb2CA2B4Fd52b086250";
+    // let settleTokenAddr = "0x3193d3e6392338919D16278Ec9f2846371591d6d";
+    // console.log(await liquidityTokenInstance.methods.nonces(ownerAddress).call());
+    // getSignature(amount, ownerAddress, function(signature, deadline){
+    //     console.log(deadline);
+    //     console.log(signature);
+        // liquidityTokenInstance.methods.permit(
+        //     ownerAddress, cbbcRouterAddress, toWei(amount), deadline,
+        //     signature.v, signature.r, signature.s
+        // ).send({from:ownerAddress});
+        // removeLiquidityWithPermit(settleTokenAddr, amount, ownerAddress, signature, deadline, function(){}, function(){});
+    // });
+    
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
@@ -116,8 +130,8 @@ async function getSignature(amount, ownerAddress, callback) {
     const msgParams = JSON.stringify({
         domain: {
             chainId: await ethereum.request({ method: 'eth_chainId' }),
-            name: 'Cbbc',
-            verifyingContract: cbbcRouterAddress,
+            name: 'CBBC Liquidity Token',
+            verifyingContract: liquidityTokenAddress,
             version: '1',
         },
     
@@ -125,7 +139,7 @@ async function getSignature(amount, ownerAddress, callback) {
             owner: ownerAddress,
             spender: cbbcRouterAddress,
             value: toWei(amount),
-            nonce: "0",
+            nonce: 0,
             deadline: deadline
         },
         primaryType: 'Permit',
@@ -139,9 +153,9 @@ async function getSignature(amount, ownerAddress, callback) {
             Permit: [
                 { name: 'owner', type: 'address' },
                 { name: 'spender', type: 'address' },
-                { name: 'value', type: 'uint' },
+                { name: 'value', type: 'uint256' },
                 { name: 'nonce', type: 'uint256' },
-                { name: 'deadline', type: 'uint' }
+                { name: 'deadline', type: 'uint256' }
             ]
         },
     });
@@ -267,7 +281,7 @@ async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, deadline, perm
                     cbbcRouterInstance.methods.sellCbbcETHWithPermit(
                         [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
                         tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
-                        [0, permit.v, permit.r, permit.s]
+                        [false, permit.v, permit.r, permit.s]
                     ).send({from: ownerAddress}, async function(error, transactionHash){
                         callback(error, transactionHash);
                     }).once('confirmation', function(confNumber, receipt){
@@ -288,7 +302,7 @@ async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, deadline, perm
                     cbbcRouterInstance.methods.sellCbbcWithPermit(
                         [priceData.settlePrice,priceData.tradePrice,priceData.nonce,priceData.signature], 
                         settleTokenAddr, tradeTokenAddr, leverage, cbbcType, toWei(amount), 0, ownerAddress, deadline,
-                        [0, permit.v, permit.r, permit.s]
+                        [false, permit.v, permit.r, permit.s]
                     ).send({from: ownerAddress}, async function(error, transactionHash){
                         callback(error, transactionHash);
                     }).once('confirmation', function(confNumber, receipt){
@@ -307,14 +321,28 @@ async function sellCbbcWithPermit(cbbcAddr, amount, ownerAddress, deadline, perm
 // return: [{address: string, name: string}]
 async function getTradeTokenList() { 
     let addresses = await cbbcFactoryInstance.methods.getAllowedTradeTokenList().call();
-    return getTokenList(addresses);
+    let list = [];
+    for(let i=0;i<addresses.length;i++) {
+        list.push({
+            address: addresses[i],
+            name: await cbbcFactoryInstance.methods.tokenSymbols(addresses[i]).call()
+        })
+    }
+    return list;
 }
 
 
 // return: [{address: string, name: string}]
 async function getSettleTokenList() { 
     let addresses = await cbbcFactoryInstance.methods.getAllowedSettleTokenList().call();
-    return getTokenList(addresses);
+    let list = [];
+    for(let i=0;i<addresses.length;i++) {
+        list.push({
+            address: addresses[i],
+            name: await cbbcFactoryInstance.methods.tokenSymbols(addresses[i]).call()
+        })
+    }
+    return list;
 }
 
 
@@ -361,10 +389,13 @@ async function getPositions(ownerAddress) {
     for(let i=0;i<cbbc.length;i++) {
         let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
         let type = await cbbc[i].instance.methods.cbbcType().call();
+        let cbbcprice = await cbbc[i].instance.methods.currentPrice().call();
+        
         positions.set(cbbc[i].address, {
             address: cbbc[i].address,
             name: cbbc[i].name,
             type: type,
+            cbbcprice: toEth(cbbcprice),
             amount: toEth(amount)
         });
     }
@@ -411,6 +442,19 @@ async function removeLiquidity(settleTokenAddr, amount, ownerAddress, callback, 
     //TODO: add advance mode for user to choose amountMin instead of 0
     cbbcRouterInstance.methods.removeLiquidity(settleTokenAddr, toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
+        callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
+}
+
+//arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function removeLiquidityWithPermit(settleTokenAddr, amount, ownerAddress, permit, deadline, callback, onConfirm) {
+    //TODO: add advance mode for user to choose amountMin instead of 0
+    cbbcRouterInstance.methods.removeLiquidityWithPermit(
+        settleTokenAddr, toWei(amount), 0, ownerAddress, deadline,
+        false, permit.v, permit.r, permit.s
+    ).send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
         onConfirm(confNumber, receipt);

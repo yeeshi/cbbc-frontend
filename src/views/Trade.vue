@@ -255,6 +255,7 @@ export default {
                   }
                 }
                 this.Balance = await helper.getBalance(addr,this.$store.state.defaultAccount);
+                this.input1 = '';
               })();
             }); 
           }

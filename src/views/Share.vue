@@ -212,7 +212,7 @@ export default {
             if (value.type == 0){
               t='熊证';
             }
-            let obj = {id: index, type: t, breed:value.name,portion:String(value.amount).replace(/^(.*\..{4}).*$/,"$1"),profit: '1.0000', clearingPrice: '1.0000'};
+            let obj = {id: index, type: t, breed:value.name,portion:String(value.amount).replace(/^(.*\..{4}).*$/,"$1"),profit: String(value.cbbcprice).replace(/^(.*\..{4}).*$/,"$1"), clearingPrice: '1.0000'};
             let addrPair = {id:index,address:value.address}
             this.desserts.push(obj);
             this.addresses.push(addrPair);

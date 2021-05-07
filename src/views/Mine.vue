@@ -20,8 +20,8 @@
             :style="isMobile?'background: #fcfcdb; width: 100%; box-shadow: 0 3px 6px rgba(0,0,0,.08); border: 1px solid #fff4e4; border-radius: 10px;':
             'background: #fcfcdb; box-shadow: 0 3px 6px rgba(0,0,0,.08); width: 30%; margin: 0 1.666%; border: 1px solid #fff4e4; border-radius: 10px;'">
               <img style="width: 80px; height: 80px;" src="../assets/avatar.jpg" alt="img">
-              <p class="text-h5 font-weight-bold mt-8 mb-0">{{item.money}}</p>
-              <p class="text-subtitle-2 font-weight-bold">BTC收益</p>
+              <p class="text-h5 font-weight-bold mt-8 mb-0">0<!--{{item.money}}--></p>
+              <p class="text-subtitle-2 font-weight-bold">CBBC收益</p>
               <div class="d-flex align-center justify-center">
                 <v-hover v-slot="{ hover }">
                   <v-container 
