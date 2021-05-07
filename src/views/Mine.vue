@@ -97,7 +97,7 @@
               
             </v-container>
             <v-container class="mb-5 pr-0 pt-0 pb-0">
-              <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供份流动性</p></div>
+              <!-- <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供份流动性</p></div> -->
             </v-container>
             <v-btn block :loading="isVerifingLoading" v-show="!isVerified" @click="handleAddVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
             <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
@@ -168,6 +168,8 @@ export default {
       clearVerifingLoading:false,
       clearVerifiedLoading:false,
       clearVerified:false,
+      signature:{},
+      deadline:0,
       settleBalance:0,
       liquity:[],
       liquityType:[],
@@ -212,7 +214,7 @@ export default {
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
-        this.totalLiquidity = tokenLiquity +ETHLiquity;
+        this.totalLiquidity = parseFloat(tokenLiquity) + parseFloat(ETHLiquity);
         this.coin = settleToken[0].name;    
       })();
     },
@@ -334,27 +336,33 @@ export default {
       (async()=>{
         this.clearVerifingLoading = true;
         if (this.liquityChoose == 'ETH'){
-          var err,hash = helpers.approveETHLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
-          (error, transactionHash)=>{
-            if (error != null){
+          helpers.getSignatureETH(this.inputRemove,this.$store.state.defaultAccount,
+          (error, permitData, deadline)=>{
+            if(error != null) {
               console.log(error);
               this.clearVerifingLoading = false;
             }
-          },(confNumber, receipt)=>{
+            else {
+              this.signature = permitData;
+              this.deadline = deadline;
               this.clearVerified = true;
               this.clearVerifingLoading = false;
-          });
+            }
+          })
         }else{
-          var err,hash = helpers.approveLiquidityToken(this.inputRemove,this.$store.state.defaultAccount,
-          (error, transactionHash)=>{
-            if (error != null){
+          helpers.getSignature(this.inputRemove,this.$store.state.defaultAccount,
+          (error, permitData, deadline)=>{
+            if(error != null) {
               console.log(error);
               this.clearVerifingLoading = false;
             }
-          },(confNumber, receipt)=>{
+            else {
+              this.signature = permitData;
+              this.deadline = deadline;
               this.clearVerified = true;
               this.clearVerifingLoading = false;
-          });
+            }
+          })
         }
         
       })();
@@ -381,7 +389,7 @@ export default {
       (async()=>{
         this.clearVerifiedLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.removeLiquidityETH(this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
+          helpers.removeLiquidityETHWithPermit(this.inputRemove,this.$store.state.defaultAccount,this.signature,this.deadline,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
         }else{
           let settleToken = await helpers.settleTokenList;
           var settleAddr = "";
@@ -390,7 +398,7 @@ export default {
               settleAddr = settleToken[i].address;
             }
           }
-          helpers.removeLiquidity(settleAddr,this.inputRemove,this.$store.state.defaultAccount,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
+          helpers.removeLiquidityWithPermit(settleAddr,this.inputRemove,this.$store.state.defaultAccount,this.signature,this.deadline,this.handleTXCallBack,this.handleClearTXConfirmCallBack);
         }  
       })(); 
     },

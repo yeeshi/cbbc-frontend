@@ -28,21 +28,7 @@ const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
-(async () => {
-    // let amount = 10;
-    // let ownerAddress = "0xa28A56bbD2b9ede5A006dBb2CA2B4Fd52b086250";
-    // let settleTokenAddr = "0x3193d3e6392338919D16278Ec9f2846371591d6d";
-    // console.log(await liquidityTokenInstance.methods.nonces(ownerAddress).call());
-    // getSignature(amount, ownerAddress, function(signature, deadline){
-    //     console.log(deadline);
-    //     console.log(signature);
-        // liquidityTokenInstance.methods.permit(
-        //     ownerAddress, cbbcRouterAddress, toWei(amount), deadline,
-        //     signature.v, signature.r, signature.s
-        // ).send({from:ownerAddress});
-        // removeLiquidityWithPermit(settleTokenAddr, amount, ownerAddress, signature, deadline, function(){}, function(){});
-    // });
-    
+(async () => {    
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
@@ -124,8 +110,10 @@ async function approveETHLiquidityToken(amount, ownerAddress, callback, onConfir
 }
 
 
-//arguments: string amount, string ownerAddress, function callback(obj signature, string deadline)
+//arguments: string amount, string ownerAddress, function callback(error, obj signature, string deadline)
 async function getSignature(amount, ownerAddress, callback) {
+    let nonce = await liquidityTokenInstance.methods.nonces(ownerAddress).call();
+
     let deadline = getDeadline();
     const msgParams = JSON.stringify({
         domain: {
@@ -139,7 +127,7 @@ async function getSignature(amount, ownerAddress, callback) {
             owner: ownerAddress,
             spender: cbbcRouterAddress,
             value: toWei(amount),
-            nonce: 0,
+            nonce: nonce,
             deadline: deadline
         },
         primaryType: 'Permit',
@@ -164,7 +152,54 @@ async function getSignature(amount, ownerAddress, callback) {
         {method: 'eth_signTypedData_v4', params: [ownerAddress, msgParams], from:ownerAddress}, 
         function (err, result) {
             let permitData = splitSignature(result.result);
-            callback(permitData, deadline);
+            callback(err, permitData, deadline);
+    });
+}
+
+
+//arguments: string amount, string ownerAddress, function callback(error, obj signature, string deadline)
+async function getSignatureETH(amount, ownerAddress, callback) {
+    let nonce = await ETHLiquidityTokenInstance.methods.nonces(ownerAddress).call();
+
+    let deadline = getDeadline();
+    const msgParams = JSON.stringify({
+        domain: {
+            chainId: await ethereum.request({ method: 'eth_chainId' }),
+            name: 'CBBC Liquidity Token',
+            verifyingContract: ETHLiquidityTokenAddress,
+            version: '1',
+        },
+    
+        message: {
+            owner: ownerAddress,
+            spender: cbbcRouterAddress,
+            value: toWei(amount),
+            nonce: nonce,
+            deadline: deadline
+        },
+        primaryType: 'Permit',
+        types: {
+            EIP712Domain: [
+                { name: 'name', type: 'string' },
+                { name: 'version', type: 'string' },
+                { name: 'chainId', type: 'uint256' },
+                { name: 'verifyingContract', type: 'address' },
+            ],
+            Permit: [
+                { name: 'owner', type: 'address' },
+                { name: 'spender', type: 'address' },
+                { name: 'value', type: 'uint256' },
+                { name: 'nonce', type: 'uint256' },
+                { name: 'deadline', type: 'uint256' }
+            ]
+        },
+    });
+    
+    web3.currentProvider.send(
+        {method: 'eth_signTypedData_v4', params: [ownerAddress, msgParams], from:ownerAddress}, 
+        function (err, result) {
+            let permitData = splitSignature(result.result);
+            callback(err, permitData, deadline);
     });
 }
 
@@ -346,20 +381,6 @@ async function getSettleTokenList() {
 }
 
 
-//arguments: [string] addresses
-//return: []
-async function getTokenList(addresses) {
-    let list = [];
-    for(let i=0;i<addresses.length;i++) {
-        let tokenInstance = new web3.eth.Contract(cbbcToken.abi, addresses[i]);
-        list.push({
-            address: addresses[i],
-            name: await tokenInstance.methods.name().call()
-        })
-    }
-    return list;
-}
-
 
 async function getCbbc() {
     if(cbbc.length == 0) { //lazy loading for cbbc
@@ -461,11 +482,26 @@ async function removeLiquidityWithPermit(settleTokenAddr, amount, ownerAddress, 
     });
 }
 
+
 //arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 async function removeLiquidityETH(amount, ownerAddress, callback, onConfirm) {
     //TODO: add advance mode for user to choose amountMin instead of 0
     cbbcRouterInstance.methods.removeLiquidityETH(toWei(amount), 0, ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
+        callback(error, transactionHash);
+    }).once('confirmation', function(confNumber, receipt){
+        onConfirm(confNumber, receipt);
+    });
+}
+
+
+//arguments: int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
+async function removeLiquidityETHWithPermit(amount, ownerAddress, permit, deadline, callback, onConfirm) {
+    //TODO: add advance mode for user to choose amountMin instead of 0
+    cbbcRouterInstance.methods.removeLiquidityETHWithPermit(
+        toWei(amount), 0, ownerAddress, deadline,
+        false, permit.v, permit.r, permit.s
+    ).send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
     }).once('confirmation', function(confNumber, receipt){
         onConfirm(confNumber, receipt);
@@ -555,7 +591,11 @@ export default {
     getETHLiquilityBalance, //获取ETH流动性份额
     addLiquidity, //添加流动性
     addLiquidityETH, //用ETH添加流动性
+    getSignature, //移除流动性签名
+    getSignatureETH, //ETH移除流动性签名
     removeLiquidity, //移除流动性
+    removeLiquidityWithPermit, //使用线下签名来移除流动性
+    removeLiquidityETHWithPermit, //ETH使用线下签名来移除流动性
     removeLiquidityETH, //eth移除流动性
     connectWallet, //连接钱包
     getAccount,
