@@ -71,7 +71,19 @@
           </v-container>
         </v-card>
       </v-dialog>
-
+      <v-dialog
+            v-model="isShowConfirmDialog"
+            overlay-color="rgba(91, 57, 38, 0.667)"
+            :width="isMobile? '': '520px'"
+          >
+            <v-card style="background: rgb(240, 233, 231);">
+              <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
+              <v-container class="pl-5 pr-5 pb-5">
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在ETHERSCAN上查看</v-btn>
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
+              </v-container>
+            </v-card>
+          </v-dialog>
       <v-footer></v-footer>
     </div>
 </template>
@@ -85,6 +97,7 @@ export default {
   },
   data () {
     return{
+      isShowConfirmDialog: false,
       isShowDialog: false,
       isMobile: false,
       input1: '',
@@ -197,9 +210,9 @@ export default {
     handleSell(){
       (async()=>{
         this.VerifiedLoading = true;
-
         helper.sellCbbcWithPermit(this.currentAddress,this.input1,this.$store.state.defaultAccount,this.deadline, this.signature, (error, transactionHash)=>{
         },(confNumber, receipt)=>{
+          this.isShowConfirmDialog = true;
           this.VerifiedLoading = false;
           this.verified = false;
           this.input1 = '';
@@ -229,6 +242,15 @@ export default {
         }
       })();
     },
+    handleViewOnEarthscan(){
+      var id = this.$store.state.defaultAccount;
+      var chain = this.chainMap.get(this.$store.state.defaultChainId);
+      var url = "https://"+chain+".etherscan.io/address/" + id;
+      window.open(url);
+    },
+    handSuccessConfirm(){
+      this.isShowConfirmDialog=false;
+    }, 
     handleRebase(id){
       var address = '';
       this.addresses.forEach(element=>{
