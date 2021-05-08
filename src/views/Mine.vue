@@ -121,6 +121,7 @@
                 ></v-select>
               <p class="mb-0 text-caption">持有份额: {{String(liquidityNumber).replace(/^(.*\..{4}).*$/,"$1")}}</p>
               </div>
+              <v-divider></v-divider>
               <p class="mb-0 text-body-2">移除比例</p>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-subheader class="pl-0 pr-0">1</v-subheader>

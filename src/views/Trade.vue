@@ -69,7 +69,7 @@
                 </div>
               </v-container>
               <v-container class="pt-0 pb-0 d-flex align-center justify-center">
-                <v-btn :loading="isVerifingLoading" v-show="!isVerified" @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
+                <v-btn :loading="isVerifingLoading" v-show="!isVerified" @click="handleVerifyOption" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
                 <v-btn :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
             </v-form>
@@ -94,6 +94,37 @@
               </v-container>
             </v-card>
           </v-dialog>
+
+          <v-dialog
+            v-model="isShowVerifyDialog"
+            overlay-color="rgba(91, 57, 38, 0.667)"
+            :width="isMobile? '': '520px'"
+          >
+            <v-card style="background: #FFFFF0;">
+              <v-container class="text-center font-weight-bold textColor--text text-h6">选择批准数量</v-container>
+              <v-container class="pl-3 pr-3 pb-5">
+                <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; border-radius: 15px;">
+                  <input type="radio" id="one" value="unlimite" v-model="picked">
+                  <label for="one">无上限</label>
+                  <br>
+                  <v-divider></v-divider>
+                  <input type="radio" id="two" value="customize" v-model="picked">
+                  <label for="two">自定义</label>
+                  <v-text-field
+                    class="pt-0"
+                    :disabled="!isCustomize"
+                    v-model="inputVerifyLimit"
+                    style="width: 100%;"
+                  >
+                  </v-text-field>
+                </v-container>
+              </v-container>
+              <v-container class="pl-5 pr-5 pb-5">
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleVerify(picked=='customize'? inputVerifyLimit:Balance)">确定</v-btn>
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleVerifyCancle">取消</v-btn>
+              </v-container>
+            </v-card>
+          </v-dialog>
           
         </div>
       </div>
@@ -115,6 +146,7 @@ export default {
                 ['0x2a','Kovan']
             ]); 
     return {
+      isShowVerifyDialog:false,
       isShowDialog:false,
       isMobile: true,
       tabs: [{ label: "牛证开仓" }, { label: "熊证开仓" }],
@@ -132,7 +164,9 @@ export default {
       Balance:0,
       allow:0,
       chainMap,
-      }
+      picked:'unlimite',
+      inputVerifyLimit:0,
+    }
     
   },
   watch:{
@@ -159,6 +193,7 @@ export default {
       this.handleRefreshData();
     },
     input1(val){
+      this.inputVerifyLimit = val;
       if (this.settle != 'ETH'){
         if (Number(val)>Number(this.allow)){
           this.verified = false;
@@ -172,6 +207,9 @@ export default {
     vHeader
   },
   computed: {
+    isCustomize: function(){
+      return this.picked == 'customize';
+    },
     isVerified: function(){
       return this.verified;
     },
@@ -218,7 +256,14 @@ export default {
     handSuccessConfirm(){
       this.isShowDialog=false;
     },
-    handleVerify(){
+    handleVerifyCancle(){
+      this.isShowVerifyDialog = false;
+    },
+    handleVerifyOption(){
+      this.isShowVerifyDialog = true;
+    },
+    handleVerify(val){
+      this.isShowVerifyDialog = false;
       (async()=>{
         this.VerifingLoading = true;
         let settleToken = await helper.settleTokenList;
@@ -228,8 +273,7 @@ export default {
             addr = settleToken[i].address;
           }
         }
-        console.log(this.Balance);
-        var err,hash = helper.approveToken(addr,this.Balance,this.$store.state.defaultAccount,
+        var err,hash = helper.approveToken(addr,val,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
