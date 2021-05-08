@@ -265,6 +265,7 @@ export default {
               }
           },(confNumber, receipt)=>{
               this.VerifiedLoading = false;
+              this.isShowDialog = true;
               (async()=>{
                 await helper.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
                     this.Balance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
