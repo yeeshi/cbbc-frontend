@@ -368,7 +368,7 @@ export default {
       (async()=>{
         this.clearVerifingLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.getSignatureETH(this.inputRemove,this.$store.state.defaultAccount,
+          helpers.getLiquiditySignatureETH(this.inputRemove,this.$store.state.defaultAccount,
           (error, permitData, deadline)=>{
             if(error != null) {
               console.log(error);
@@ -382,7 +382,7 @@ export default {
             }
           })
         }else{
-          helpers.getSignature(this.inputRemove,this.$store.state.defaultAccount,
+          helpers.getLiquiditySignature(this.inputRemove,this.$store.state.defaultAccount,
           (error, permitData, deadline)=>{
             if(error != null) {
               console.log(error);

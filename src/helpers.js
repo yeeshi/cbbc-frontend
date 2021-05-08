@@ -9,7 +9,7 @@ import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 
 const cbbcFactoryAddress = "0x9AE915DA96117094E0e06880c8e5Ec23551c7c82";
-const cbbcRouterAddress = "0xeE32eFAACe4a95d93376E0F9B5fe3AB642630ce3";
+const cbbcRouterAddress = "0x1591f7F4813Ce4A9f03EabaA841DC9a5f5f1DBD0";
 const wethAddress = "0x9F4B99590B6577C4515BF314597B6D4dCA8af45A";
 const liquidityTokenAddress = "0x53ccFB76825F02D3c065AdE948BCfB7b5653A7d6";
 const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
@@ -110,63 +110,37 @@ async function approveETHLiquidityToken(amount, ownerAddress, callback, onConfir
 }
 
 
-//arguments: string amount, string ownerAddress, function callback(error, obj signature, string deadline)
-async function getSignature(amount, ownerAddress, callback) {
-    let nonce = await liquidityTokenInstance.methods.nonces(ownerAddress).call();
-
-    let deadline = getDeadline();
-    const msgParams = JSON.stringify({
-        domain: {
-            chainId: await ethereum.request({ method: 'eth_chainId' }),
-            name: 'CBBC Liquidity Token',
-            verifyingContract: liquidityTokenAddress,
-            version: '1',
-        },
-    
-        message: {
-            owner: ownerAddress,
-            spender: cbbcRouterAddress,
-            value: toWei(amount),
-            nonce: nonce,
-            deadline: deadline
-        },
-        primaryType: 'Permit',
-        types: {
-            EIP712Domain: [
-                { name: 'name', type: 'string' },
-                { name: 'version', type: 'string' },
-                { name: 'chainId', type: 'uint256' },
-                { name: 'verifyingContract', type: 'address' },
-            ],
-            Permit: [
-                { name: 'owner', type: 'address' },
-                { name: 'spender', type: 'address' },
-                { name: 'value', type: 'uint256' },
-                { name: 'nonce', type: 'uint256' },
-                { name: 'deadline', type: 'uint256' }
-            ]
-        },
-    });
-    
-    web3.currentProvider.send(
-        {method: 'eth_signTypedData_v4', params: [ownerAddress, msgParams], from:ownerAddress}, 
-        function (err, result) {
-            let permitData = splitSignature(result.result);
-            callback(err, permitData, deadline);
-    });
+async function getCbbcSignature(cbbcAddr, amount, ownerAddress, callback) {
+    let tokenInstance = new web3.eth.Contract(cbbcToken.abi, cbbcAddr);
+    let nonce = await tokenInstance.methods.nonces(ownerAddress).call();
+    let name = await tokenInstance.methods.name().call();
+    signature(name, nonce, cbbcAddr, amount, ownerAddress, callback);
 }
 
 
 //arguments: string amount, string ownerAddress, function callback(error, obj signature, string deadline)
-async function getSignatureETH(amount, ownerAddress, callback) {
-    let nonce = await ETHLiquidityTokenInstance.methods.nonces(ownerAddress).call();
+async function getLiquiditySignature(amount, ownerAddress, callback) {
+    let nonce = await liquidityTokenInstance.methods.nonces(ownerAddress).call();
+    let name = 'CBBC Liquidity Token';
+    signature(name, nonce, liquidityTokenAddress, amount, ownerAddress, callback);
+}
 
+
+//arguments: string amount, string ownerAddress, function callback(error, obj signature, string deadline)
+async function getLiquiditySignatureETH(amount, ownerAddress, callback) {
+    let nonce = await ETHLiquidityTokenInstance.methods.nonces(ownerAddress).call();
+    let name = 'CBBC Liquidity Token';
+    signature(name, nonce, ETHLiquidityTokenAddress, amount, ownerAddress, callback);
+}
+
+
+async function signature(name, nonce, tokenAddress, amount, ownerAddress, callback) {
     let deadline = getDeadline();
     const msgParams = JSON.stringify({
         domain: {
             chainId: await ethereum.request({ method: 'eth_chainId' }),
-            name: 'CBBC Liquidity Token',
-            verifyingContract: ETHLiquidityTokenAddress,
+            name: name,
+            verifyingContract: tokenAddress,
             version: '1',
         },
     
@@ -411,7 +385,6 @@ async function getPositions(ownerAddress) {
         let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
         let type = await cbbc[i].instance.methods.cbbcType().call();
         let cbbcprice = await cbbc[i].instance.methods.currentPrice().call();
-        
         positions.set(cbbc[i].address, {
             address: cbbc[i].address,
             name: cbbc[i].name,
@@ -584,6 +557,8 @@ export default {
     buyCbbc,  //购买牛熊证
     buyCbbcETH, //用ETH购买牛熊证
     sellCbbc, //出售牛熊证
+    getCbbcSignature, // 平仓签名
+    sellCbbcWithPermit, //用线下签名来出售牛熊证
     getPositions, //获取用户持仓列表
     rebase, //rebase
     getTotalLiabilities, //显示流动性收益
@@ -591,8 +566,8 @@ export default {
     getETHLiquilityBalance, //获取ETH流动性份额
     addLiquidity, //添加流动性
     addLiquidityETH, //用ETH添加流动性
-    getSignature, //移除流动性签名
-    getSignatureETH, //ETH移除流动性签名
+    getLiquiditySignature, //移除流动性签名
+    getLiquiditySignatureETH, //ETH移除流动性签名
     removeLiquidity, //移除流动性
     removeLiquidityWithPermit, //使用线下签名来移除流动性
     removeLiquidityETHWithPermit, //ETH使用线下签名来移除流动性

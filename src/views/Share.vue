@@ -105,6 +105,8 @@ export default {
       addresses:[],
       currentAddress:'',
       slider1:1,
+      signature:{},
+      deadline:0,
     }
   },
   watch:{
@@ -168,29 +170,35 @@ export default {
       }
       );
     },
-    /// 平仓确认
+    /// 平仓签名
     handleConfirm() {
       (async()=>{    
         this.VerifingLoading = true;
 
-        var err,hash = helper.approveToken(this.currentAddress,this.input1,this.$store.state.defaultAccount,
-          (error, transactionHash)=>{
-            if (error != null){
-              console.log(error);
+        helper.getCbbcSignature(this.currentAddress,this.input1,this.$store.state.defaultAccount,
+        (error, permitData, deadline)=>{
+          if(error != null) {
+            console.log(error);
               this.VerifingLoading = false;
-            } 
-          },(confNumber, receipt)=>{
+          }
+          else {
+            this.signature = permitData;
+            this.deadline = deadline;
             this.verified = true;
             this.VerifingLoading = false;
-          });
+          }
+        });
+
+
+          
       })();
     },
     /// 平仓
     handleSell(){
       (async()=>{
         this.VerifiedLoading = true;
-        helper.sellCbbc(this.currentAddress,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
-          
+
+        helper.sellCbbcWithPermit(this.currentAddress,this.input1,this.$store.state.defaultAccount,this.deadline, this.signature, (error, transactionHash)=>{
         },(confNumber, receipt)=>{
           this.VerifiedLoading = false;
           this.verified = false;
