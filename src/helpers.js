@@ -56,7 +56,7 @@ function getDeadline() {
 }
 
 function toWei(amount) {
-    return BigInt(amount * Math.pow(10, 18)).toString();
+    return BigInt(Math.floor(amount * Math.pow(10, 18))).toString();
 }
 
 function toEth(amount) {
