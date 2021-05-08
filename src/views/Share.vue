@@ -45,10 +45,10 @@
              <v-container class="mb-5" style="border: 1px solid rgb(226, 214, 207); box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: rgb(240, 233, 231); border-radius: 15px;">
               <p class="mb-0 text-body-2">平仓比例</p>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
-                <v-subheader class="pl-0 pr-0">1</v-subheader>
+                <v-subheader class="pl-0 pr-0">0</v-subheader>
                 <v-slider
                   max="100"
-                  min="1"
+                  min="0"
                   v-model="slider1"
                   :thumb-size="18"
                   thumb-label="always"
@@ -117,7 +117,7 @@ export default {
       verified:false,
       addresses:[],
       currentAddress:'',
-      slider1:1,
+      slider1:0,
       signature:{},
       deadline:0,
     }
