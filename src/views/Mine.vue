@@ -350,7 +350,7 @@ export default {
           }
         }
         
-        var err,hash = helpers.approveToken(addr,this.inputAdd,this.$store.state.defaultAccount,
+        var err,hash = helpers.approveToken(addr,this.settleBalance,this.$store.state.defaultAccount,
           (error, transactionHash)=>{
             if (error != null){
               console.log(error);
