@@ -8,10 +8,10 @@ import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 
-const cbbcFactoryAddress = "0x271234A3aeEe48305d702D8B3A200788F00Ee08F";
-const cbbcRouterAddress = "0xCfA012de46e58F2E4cc504d14e64378766962e9b";
+const cbbcFactoryAddress = "0xcAF02483A62Abc43872e4f02fcE02cEFC96279E0";
+const cbbcRouterAddress = "0x1FAa76591dB422b53E5E2FE25375E9B78953021b";
 const wethAddress = "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f";
-const liquidityTokenAddress = "0x5859308F78dD5124261974F6a27B0C252e169c6B";
+const liquidityTokenAddress = "0x88939B9812643F247d2D3CBE315757F3F8ec0731";
 // const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
 const orchestratorAddress = "0x7C34503320211181f82bcf2e27a011D1735671Fe";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
