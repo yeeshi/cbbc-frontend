@@ -85,7 +85,7 @@
                 <p class="textColor--text pt-3 mb-0">{{this.$store.state.defaultAccount}}</p>
                 <p class="textColor--text pt-3 mb-0">{{this.eth}} ETH</p>
                 <div class="text-caption textColor--text mb-8"></div>
-                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">Etherscan</span></v-btn>
+                <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor" @click="handleViewOnEarthscan"><span class="textColor--text">HecoInfo</span></v-btn>
                 <v-btn width="100%" class="rounded-lg mb-8" large color="btnColor" @click="handleSignOut"><span class="textColor--text">登出</span></v-btn>
                 <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="btnTextColor--text">取消</span></v-btn>
         </v-card>
@@ -197,8 +197,8 @@ export default {
       },
       handleViewOnEarthscan(){
         var id = this.$store.state.defaultAccount;
-        var chain = this.chainMap.get(this.$store.state.defaultChainId);
-        var url = "https://"+chain+".etherscan.io/address/" + id;
+        // var chain = this.chainMap.get(this.$store.state.defaultChainId);
+        var url = "https://hecoinfo.com/address/" + id;
         window.open(url);
        
       }

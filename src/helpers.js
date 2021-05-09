@@ -40,7 +40,7 @@ window.addEventListener('load', function() {
 
 
 async function handleChainChanged(id) {
-    
+    //TODO: handle tx viewer URL and contract address change.
 }
 
 async function handleAccountsChanged(accounts) {

@@ -79,7 +79,7 @@
             <v-card style="background: rgb(240, 233, 231);">
               <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
               <v-container class="pl-5 pr-5 pb-5">
-                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在ETHERSCAN上查看</v-btn>
+                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在HecoInfo上查看</v-btn>
                   <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
               </v-container>
             </v-card>
@@ -244,8 +244,8 @@ export default {
     },
     handleViewOnEarthscan(){
       var id = this.$store.state.defaultAccount;
-      var chain = this.chainMap.get(this.$store.state.defaultChainId);
-      var url = "https://"+chain+".etherscan.io/address/" + id;
+      // var chain = this.chainMap.get(this.$store.state.defaultChainId);
+      var url = "https://hecoinfo.com/address/" + id;
       window.open(url);
     },
     handSuccessConfirm(){

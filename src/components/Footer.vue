@@ -8,10 +8,10 @@ export default {
     name: 'footer',
     data: () => ({
         list: [
-            { url: '', label: 'Discord' },
-            { url: '', label: 'Github' },
-            { url: '', label: 'Twitter' },
-            { url: '', label: 'Medium' }
+            // { url: '', label: 'Discord' },
+            // { url: '', label: 'Github' },
+            // { url: '', label: 'Twitter' },
+            // { url: '', label: 'Medium' }
         ]
     }),
     methods: {
