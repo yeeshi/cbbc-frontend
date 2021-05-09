@@ -230,7 +230,7 @@ export default {
   mounted () {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
-    this.handleRefreshData()
+    this.handleRefreshData();
     this.handleGetAccout();
   },
   watch: {
@@ -239,21 +239,21 @@ export default {
         let settleToken = await helpers.settleTokenList;
         for(let i=0;i<settleToken.length;i++)
           this.coinType.push(settleToken[i].name);
-
+        
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
-        let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
+        // let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
-        this.totalLiquidity = parseFloat(tokenLiquity) + parseFloat(ETHLiquity);
+        this.totalLiquidity = parseFloat(tokenLiquity); // + parseFloat(ETHLiquity);
         this.coin = settleToken[0].name;    
       })();
     },
     coin(val){
       (async()=>{
         if (val == 'ETH'){
-          await helpers.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
-                this.settleBalance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
-            });
-            this.addVerified = true;
+          // await helpers.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
+          //       this.settleBalance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
+          //   });
+          //   this.addVerified = true;
         }else{
           let settleToken = await helpers.settleTokenList;
           this.addVerified = false;
@@ -296,17 +296,17 @@ export default {
     /// 刷新收益
     handleGetAccout() {
       (async()=>{
-        var number = await helpers.getTotalLiabilities();
-        number = String(number).replace(/^(.*\..{4}).*$/,"$1");
-        number = Number(number);
-        this.list[0].money = number;
+        // var number = await helpers.getTotalLiabilities();
+        // number = String(number).replace(/^(.*\..{4}).*$/,"$1");
+        // number = Number(number);
+        // this.list[0].money = number;
       })();
     },
     handleRefreshData(){
       (async()=>{
         let settleToken = await helpers.settleTokenList;
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
-        let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
+        // let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
         for(let i=0;i<settleToken.length;i++){
           this.coinType.push(settleToken[i].name);
@@ -314,15 +314,15 @@ export default {
           this.liquity.push(tokenLiquity);
         }
 
-        this.liquityType.push('ETH');
-        this.liquity.push(ETHLiquity);
+        // this.coinType.push('ETH'); 
+        // this.liquityType.push('ETH');
+        // this.liquity.push(ETHLiquity);
         this.liquidityNumber = tokenLiquity;
         this.liquityChoose = settleToken[0].name;
         
-        this.totalLiquidity = Number(tokenLiquity) + Number(ETHLiquity);
+        this.totalLiquidity = Number(tokenLiquity); // + Number(ETHLiquity);
         this.coin = settleToken[0].name;
         this.settleBalance = await helpers.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
-        this.coinType.push('ETH'); 
       })();
     },/// 添加流动
     handleAdd() {
@@ -368,19 +368,19 @@ export default {
       (async()=>{
         this.clearVerifingLoading = true;
         if (this.liquityChoose == 'ETH'){
-          helpers.getLiquiditySignatureETH(this.inputRemove,this.$store.state.defaultAccount,
-          (error, permitData, deadline)=>{
-            if(error != null) {
-              console.log(error);
-              this.clearVerifingLoading = false;
-            }
-            else {
-              this.signature = permitData;
-              this.deadline = deadline;
-              this.clearVerified = true;
-              this.clearVerifingLoading = false;
-            }
-          })
+          // helpers.getLiquiditySignatureETH(this.inputRemove,this.$store.state.defaultAccount,
+          // (error, permitData, deadline)=>{
+          //   if(error != null) {
+          //     console.log(error);
+          //     this.clearVerifingLoading = false;
+          //   }
+          //   else {
+          //     this.signature = permitData;
+          //     this.deadline = deadline;
+          //     this.clearVerified = true;
+          //     this.clearVerifingLoading = false;
+          //   }
+          // })
         }else{
           helpers.getLiquiditySignature(this.inputRemove,this.$store.state.defaultAccount,
           (error, permitData, deadline)=>{

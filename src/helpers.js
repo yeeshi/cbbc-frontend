@@ -8,12 +8,12 @@ import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 
-const cbbcFactoryAddress = "0x9AE915DA96117094E0e06880c8e5Ec23551c7c82";
-const cbbcRouterAddress = "0x1591f7F4813Ce4A9f03EabaA841DC9a5f5f1DBD0";
-const wethAddress = "0x9F4B99590B6577C4515BF314597B6D4dCA8af45A";
-const liquidityTokenAddress = "0x53ccFB76825F02D3c065AdE948BCfB7b5653A7d6";
-const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
-const orchestratorAddress = "0x48A6455D399c77193424C23E1349aC11445f2c7a";
+const cbbcFactoryAddress = "0x271234A3aeEe48305d702D8B3A200788F00Ee08F";
+const cbbcRouterAddress = "0xCfA012de46e58F2E4cc504d14e64378766962e9b";
+const wethAddress = "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f";
+const liquidityTokenAddress = "0x5859308F78dD5124261974F6a27B0C252e169c6B";
+// const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
+const orchestratorAddress = "0x7C34503320211181f82bcf2e27a011D1735671Fe";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
 
@@ -21,7 +21,7 @@ let web3 = new Web3(Web3.givenProvider);
 const cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
 const cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 const liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
-const ETHLiquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, ETHLiquidityTokenAddress);
+// const ETHLiquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, ETHLiquidityTokenAddress);
 const orchestratorInstance = new web3.eth.Contract(orchestrator.abi, orchestratorAddress);
 
 const settleTokenList = getSettleTokenList();

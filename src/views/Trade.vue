@@ -140,7 +140,7 @@ export default {
   watch:{
     settle(val){
       (async()=>{
-        if (val == 'ETH'){
+        if (val == 'HT'){
           await helper.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
                 this.Balance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
             });
@@ -162,7 +162,7 @@ export default {
     },
     input1(val){
       this.inputVerifyLimit = val;
-      if (this.settle != 'ETH'){
+      if (this.settle != 'HT'){
         if (Number(val)>Number(this.allow)){
           this.verified = false;
         }else{
@@ -205,7 +205,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
-        this.currencies.push('ETH');  
+        this.currencies.push('HT');  //TODO: switch symbol when change chain ID
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
     },
@@ -258,7 +258,7 @@ export default {
           }
         }
         var trickNumber = this.ticksLabels[this.ticks];
-        if (this.settle == 'ETH'){
+        if (this.settle == 'HT'){
           helper.buyCbbcETH(tradeAddr,trickNumber,(this.currentIndex == 0)?1:0,this.input1,this.$store.state.defaultAccount,(error, transactionHash)=>{
               if(error!=null){
                   this.VerifiedLoading = false;
