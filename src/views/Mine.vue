@@ -40,8 +40,8 @@
             :style="isMobile?'background: #fcfcdb; width: 100%; box-shadow: 0 3px 6px rgba(0,0,0,.08); border: 1px solid #fff4e4; border-radius: 10px;':
             'background: #fcfcdb; box-shadow: 0 3px 6px rgba(0,0,0,.08); width: 30%; margin: 0 1.666%; border: 1px solid #fff4e4; border-radius: 10px;'">
               <img style="width: 80px; height: 80px;" src="../assets/avatar.jpg" alt="img">
-              <p class="text-h5 font-weight-bold mt-8 mb-0">{{String(totalLiquidity).replace(/^(.*\..{4}).*$/,"$1")}}</p>
-              <p class="text-subtitle-2 font-weight-bold">流动性份额</p>
+              <p class="text-h5 font-weight-bold mt-8 mb-0">{{to4DecimalString(totalLiquidity)}}<span style="font-size:0.9rem"> 流动性份额</span></p>
+              <p class="text-subtitle-2 font-weight-bold">您拥有总流动性份额的{{liquidityPercentage}}%</p>
               <div class="d-flex align-center justify-center">
                 <v-hover v-slot="{ hover }">
                   <v-container 
@@ -83,7 +83,7 @@
                   v-model="coin"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">余额: {{String(settleBalance).replace(/^(.*\..{4}).*$/,"$1")}}</p>
+              <p class="mb-0 text-caption">余额: {{to4DecimalString(settleBalance)}}</p>
               </div>
               <div class="d-flex align-center justify-space-between pt-9" style="height: 44px;">
                 <v-text-field
@@ -119,7 +119,7 @@
                   v-model="liquityChoose"
                   dense
                 ></v-select>
-              <p class="mb-0 text-caption">持有份额: {{String(liquidityNumber).replace(/^(.*\..{4}).*$/,"$1")}}</p>
+              <p class="mb-0 text-caption">持有份额: {{to4DecimalString(liquidityNumber)}}</p>
               </div>
               <v-divider></v-divider>
               <p class="mb-0 text-body-2">移除比例</p>
@@ -199,6 +199,7 @@ export default {
       deadline:0,
       settleBalance:0,
       liquity:[],
+      liquidityPercentage:0,
       liquityType:[],
       liquityChoose:'',
       liquidityNumber:0,
@@ -243,7 +244,7 @@ export default {
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
         // let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
-        this.totalLiquidity = parseFloat(tokenLiquity); // + parseFloat(ETHLiquity);
+        this.totalLiquidity = helpers.to4DecimalString(tokenLiquity); // + ETHLiquity);
         this.coin = settleToken[0].name;    
       })();
     },
@@ -251,7 +252,7 @@ export default {
       (async()=>{
         if (val == 'ETH'){
           // await helpers.getETHBalance(this.$store.state.defaultAccount,(balance)=>{
-          //       this.settleBalance = String(balance).replace(/^(.*\..{4}).*$/,"$1");
+          //       this.settleBalance = helpers.to4DecimalString(balance);
           //   });
           //   this.addVerified = true;
         }else{
@@ -285,7 +286,7 @@ export default {
       }
     },
     slider1(val){
-      this.inputRemove = (val/100)*this.liquidityNumber;
+      this.inputRemove = Math.floor((val/100)*this.liquidityNumber*10000)/10000;
     }
   
   },
@@ -297,7 +298,7 @@ export default {
     handleGetAccout() {
       (async()=>{
         // var number = await helpers.getTotalLiabilities();
-        // number = String(number).replace(/^(.*\..{4}).*$/,"$1");
+        // number = helpers.to4DecimalString(number);
         // number = Number(number);
         // this.list[0].money = number;
       })();
@@ -306,6 +307,8 @@ export default {
       (async()=>{
         let settleToken = await helpers.settleTokenList;
         let tokenLiquity = await helpers.getLiquilityBalance(this.$store.state.defaultAccount);
+        let totalLiquidity = await helpers.getTotalSupply();
+        this.liquidityPercentage = (tokenLiquity/totalLiquidity * 100).toFixed(2);
         // let ETHLiquity = await helpers.getETHLiquilityBalance(this.$store.state.defaultAccount);
 
         for(let i=0;i<settleToken.length;i++){
@@ -332,7 +335,10 @@ export default {
       this.inputAdd = this.settleBalance
     },
     handleClearMax() {
-      this.inputRemove = this.liquidityNumber
+      (async () => {    
+      console.log(await helpers.getLiquilityBalance(this.$store.state.defaultAccount));
+      })();
+      this.inputRemove = this.liquidityNumber;
     },
     /// 清除流动
     handleClear() {
@@ -469,6 +475,9 @@ export default {
           this.handleRefreshData();
         }
     },
+    to4DecimalString(number) {
+      return String(Math.floor(parseFloat(number)*10000)/10000);
+    }
   },
   beforeDestroy () {
     if (typeof window === 'undefined') return

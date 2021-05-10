@@ -233,7 +233,7 @@ export default {
             if (value.type == 0){
               t='熊证';
             }
-            let obj = {id: index, type: t, breed:value.name,portion:String(parseFloat(value.amount).toFixed(5)).replace(/^(.*\..{4}).*$/,"$1"),profit: String(parseFloat(value.cbbcprice).toFixed(5)).replace(/^(.*\..{4}).*$/,"$1"), clearingPrice: '1.0000'};
+            let obj = {id: index, type: t, breed:value.name,portion:helper.to4DecimalString(value.amount),profit: helper.to4DecimalString(value.cbbcprice), clearingPrice: '1.0000'};
             let addrPair = {id:index,address:value.address}
             this.desserts.push(obj);
             this.addresses.push(addrPair);

@@ -8,10 +8,10 @@ import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 
-const cbbcFactoryAddress = "0xcAF02483A62Abc43872e4f02fcE02cEFC96279E0";
-const cbbcRouterAddress = "0x1FAa76591dB422b53E5E2FE25375E9B78953021b";
+const cbbcFactoryAddress = "0x9cE57A8Ea83F64765d4C558593e2635BBFe5BE06";
+const cbbcRouterAddress = "0x4097d6A81BD705e373697ceeeF4C431166c07Aa2";
 const wethAddress = "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f";
-const liquidityTokenAddress = "0x88939B9812643F247d2D3CBE315757F3F8ec0731";
+const liquidityTokenAddress = "0xA9F8a775A87A51EF4BcFAa109239C4f6B64be951";
 // const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
 const orchestratorAddress = "0x7C34503320211181f82bcf2e27a011D1735671Fe";
 const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
@@ -29,6 +29,7 @@ const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
 (async () => {    
+    console.log(await getTotalSupply());
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
@@ -410,9 +411,17 @@ async function getTotalLiabilities() {
     return toEth(liabilities);
 }
 
+async function getTotalSupply() {
+    let supply = await liquidityTokenInstance.methods.totalSupply().call()
+    return toEth(supply);
+}
+
 //arguments: string settleTokenAddress, int amount, string ownerAddress, function callback(error, transactionHash), function onConfirm()
 //return: {string error, string transactionHash}
 async function addLiquidity(settleTokenAddr, amount, ownerAddress,callback, onConfirm) {
+    console.log(settleTokenAddr);
+    console.log(amount);
+    console.log(ownerAddress);
     cbbcRouterInstance.methods.addLiquidity(settleTokenAddr, toWei(amount), ownerAddress, getDeadline())
     .send({from: ownerAddress}, async function(error, transactionHash){
         callback(error, transactionHash);
@@ -544,6 +553,14 @@ function getAccount(accountHandler) { //获取用户账户
 }
 
 
+//argument: number
+//return: string format of 4 decimal number round down
+function to4DecimalString(number) {
+    let result = Math.floor(parseFloat(number)*10000)/10000;
+    return String(result.toFixed(4));
+}
+
+
 export default {
     settleTokenList,
     tradeTokenList,
@@ -561,7 +578,8 @@ export default {
     sellCbbcWithPermit, //用线下签名来出售牛熊证
     getPositions, //获取用户持仓列表
     rebase, //rebase
-    getTotalLiabilities, //显示流动性收益
+    getTotalLiabilities, //获取流动性收益
+    getTotalSupply, //获取总流动性份额数量
     getLiquilityBalance, //获取流动性份额
     getETHLiquilityBalance, //获取ETH流动性份额
     addLiquidity, //添加流动性
@@ -574,5 +592,6 @@ export default {
     removeLiquidityETH, //eth移除流动性
     connectWallet, //连接钱包
     getAccount,
+    to4DecimalString
 }
 
