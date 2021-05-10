@@ -72,6 +72,7 @@
                 <v-btn :loading="isVerifingLoading" v-show="!isVerified" @click="handleVerify" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">批准</span></v-btn>
                 <v-btn :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleSubmit" style="width: 40%;" class="rounded-lg" :outlined="isMobile" :color="currentIndex === 0? '#FF6871':'#0483FF'" ><span :class="isMobile? (currentIndex === 0? 'bullColor--text':'bearColor--text'): 'white--text'">开仓</span></v-btn>
               </v-container>          
+              <div v-show="isVerifiedLoading" style="padding: 10px 0 0 0; text-align:center; font-size:0.9rem">正在为您开仓，请耐心等待……</div>
             </v-form>
           </v-card>
           <v-container width="100%" v-if="false">
