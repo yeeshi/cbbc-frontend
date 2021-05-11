@@ -8,6 +8,7 @@
         <v-data-table
             :headers="headers"
             :items="desserts"
+            :loading="isLoadingData"
             hide-default-footer
             class="elevation"
             item-key="id"
@@ -153,6 +154,7 @@ export default {
       deadline:0,
       loginDialog:false,
       walletInstalled:true,
+      isLoadingData:false,
     }
   },
   watch:{
@@ -235,9 +237,6 @@ export default {
             this.VerifingLoading = false;
           }
         });
-
-
-          
       })();
     },
     /// 平仓
@@ -274,6 +273,7 @@ export default {
       this.loginDialog = false;
     },
     handleRefresh(){
+      this.isLoadingData = true;
       (async()=>{
         let list = await helper.getPositions(this.$store.state.defaultAccount);
         this.desserts = [];
@@ -292,6 +292,7 @@ export default {
           }
           index++;
         }
+        this.isLoadingData = false;
       })();
     },
     handleCancel() {
