@@ -204,7 +204,6 @@ export default {
       },
       handleWalletConnect(){
           helper.walletConnect((account)=>{
-              console.log(account);
             if(account!="") {
                 this.isLogin = true;
                 this.$store.state.defaultAccount = account[0];
