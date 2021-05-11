@@ -1,7 +1,7 @@
 <template>
     <div class="pl-3 pr-3" style="padding-top: 70px;">
       <v-container v-if="!$store.state.login" style="min-height:calc(100vh - 120px); position: relative;" class="mt-0 mb-0 pt-0 pb-0">
-        <v-btn @click="handleUnLock" class="mr-1 rounded-lg" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" color="btnColor" ><span class="btnTextColor--text">🔓 请先解锁钱包</span></v-btn>
+        <v-btn @click="handleUnlockWallet" class="mr-1 rounded-lg" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" color="btnColor" ><span class="btnTextColor--text">🔓 请先解锁钱包</span></v-btn>
       </v-container>
       <v-container v-else style="min-height:calc(100vh - 70px);" class="mt-0 mb-0">
         <p class="text-subtitle-1 font-weight-bold text-center">你的持仓</p>
@@ -72,18 +72,49 @@
         </v-card>
       </v-dialog>
       <v-dialog
-            v-model="isShowConfirmDialog"
-            overlay-color="rgba(91, 57, 38, 0.667)"
-            :width="isMobile? '': '520px'"
-          >
-            <v-card style="background: rgb(240, 233, 231);">
-              <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
-              <v-container class="pl-5 pr-5 pb-5">
-                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在HecoInfo上查看</v-btn>
-                  <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
-              </v-container>
-            </v-card>
-          </v-dialog>
+        v-model="isShowConfirmDialog"
+        overlay-color="rgba(91, 57, 38, 0.667)"
+        :width="isMobile? '': '520px'"
+      >
+        <v-card style="background: rgb(240, 233, 231);">
+          <v-container class="text-center font-weight-bold textColor--text text-h6">交易成功</v-container>
+          <v-container class="pl-5 pr-5 pb-5">
+              <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handleViewOnEarthscan"  >在HecoInfo上查看</v-btn>
+              <v-btn width="100%" class="rounded-lg mb-3" large color="btnColor"   @click="handSuccessConfirm"  >确定</v-btn>
+          </v-container>
+        </v-card>
+      </v-dialog>
+      <v-dialog 
+        v-model="loginDialog"
+        :width="!isMobile?'512px': ''"
+        persistent
+        overlay-color="rgba(91, 57, 38, 0.667)">
+        <v-card 
+            elevation="2"
+            color="#FFFFF0"
+            :width="!isMobile?'512px': '100%'"
+            class="pl-5 pr-5 pt-5 pb-5"
+        >  
+            <p class="textColor--text font-weight-bold text-center text-h6">请选择钱包类型</p>
+            <div class="d-flex align-item pt-8 pb-8" style="width: 100%;">
+                <div class="mr-2 d-inline-flex align-center flex-column pt-3 pb-3 pl-3 pr-3" style="border: 1px solid rgb(226, 214, 207); border-radius: 12px; box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; width: 50%;">
+                    <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
+                        <img src="../assets/metamask-fox.svg" alt="fox">
+                    </div>
+                    <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">Metamask</p>
+                    <v-btn @click="handleUnlock" :disabled="!walletInstalled" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">{{walletInstalled? "连接":"请先安装插件"}}</span></v-btn>
+                </div>
+                <div class="ml-2 d-inline-flex align-center flex-column pt-3 pb-3 pl-3 pr-3" style="border: 1px solid rgb(226, 214, 207); border-radius: 12px; box-shadow: rgb(247, 244, 242) 1px 1px 0px inset; background: #FFFFF0; width: 50%;">
+                    <div style="display: inline-flex; align-item: center; justify-content:center; width: 80px; height: 80px; border-radius: 50%; text-align: center; box-shadow: rgb(226, 214, 207) 4px 4px 8px inset, rgb(247, 244, 242) -6px -6px 12px inset;">
+                        <img style="width: 35px;" src="../assets/wallet-connect.svg" alt="connect">
+                    </div>
+                    <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">WalletConnect</p>
+                    <v-btn @click="handleWalletConnect" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
+                </div>
+            </div>
+            <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="textColor--text">取消</span></v-btn>
+        </v-card>
+      </v-dialog>
       <v-footer></v-footer>
     </div>
 </template>
@@ -120,6 +151,8 @@ export default {
       slider1:0,
       signature:{},
       deadline:0,
+      loginDialog:false,
+      walletInstalled:true,
     }
   },
   watch:{
@@ -146,13 +179,14 @@ export default {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
     this.handleRefresh();   
+    this.walletInstalled = helper.IsWalletInstalled();
   },
   methods: {
     onResize () {
       this.isMobile = window.innerWidth < 750
     },
     /// 点击解锁
-    handleUnLock() {
+    handleUnlock() {
       helper.connectWallet((account)=>{
             if(account!="") {
                 this.isLogin = true;
@@ -164,7 +198,7 @@ export default {
                 this.$store.state.defaultChainId = id;    
             }
         });
-        
+       this.loginDialog = false; 
     },
     /// 点击平仓
     handleShowDialog(id) {
@@ -221,6 +255,24 @@ export default {
         }); 
       })();
     },
+    handleUnlockWallet(){
+      this.loginDialog = true;
+    },
+    handleWalletConnect(){
+        helper.walletConnect((account)=>{
+          if(account!="") {
+              this.isLogin = true;
+              this.$store.state.defaultAccount = account[0];
+              this.$store.state.login = true;
+              
+          }
+      },(id)=>{
+          if(id!="") {
+              this.$store.state.defaultChainId = id;    
+          }
+      });
+      this.loginDialog = false;
+    },
     handleRefresh(){
       (async()=>{
         let list = await helper.getPositions(this.$store.state.defaultAccount);
@@ -241,6 +293,9 @@ export default {
           index++;
         }
       })();
+    },
+    handleCancel() {
+        this.loginDialog = false;
     },
     handleViewOnEarthscan(){
       var id = this.$store.state.defaultAccount;
