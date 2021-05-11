@@ -99,8 +99,8 @@
             <v-container class="mb-5 pr-0 pt-0 pb-0">
               <!-- <div class="d-flex align-center"><p class="mb-0 text-body-2">流动性份额：</p><p class="mb-0 text-body-2">你将提供份流动性</p></div> -->
             </v-container>
-            <v-btn block :loading="isVerifingLoading" v-show="!isVerified" @click="handleAddVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
-            <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block :loading="isVerifingLoading" v-show="!isVerified" @click="handleAddVerify" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'bearColor--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isVerifiedLoading" :disabled="!isVerified" @click="handleAddConfirm" class="rounded-lg" :outlined="isMobile" color="#0483FF" ><span :class="isMobile? 'bearColor--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>
@@ -144,8 +144,8 @@
                 </v-subheader>
               </div>
             </v-container>
-            <v-btn block :loading="isremoveVerifingLoading" v-show="!isclearVerified" @click="handleClearVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">批准</span></v-btn>
-            <v-btn block :loading="isclearVerifiedLoading" :disabled="!isclearVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'white--text': 'white--text'">确定</span></v-btn>
+            <v-btn block :loading="isremoveVerifingLoading" v-show="!isclearVerified" @click="handleClearVerify" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'bullColor--text': 'white--text'">批准</span></v-btn>
+            <v-btn block :loading="isclearVerifiedLoading" :disabled="!isclearVerified" @click="handleRemoveConfirm" class="rounded-lg" :outlined="isMobile" color="#FF6871" ><span :class="isMobile? 'bullColor--text': 'white--text'">确定</span></v-btn>
           </v-container>
         </v-card>
       </v-dialog>

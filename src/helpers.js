@@ -31,7 +31,6 @@ const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
 (async () => {        
-    console.log(priceDataServer);
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
