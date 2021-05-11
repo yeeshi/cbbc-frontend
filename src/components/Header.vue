@@ -67,7 +67,7 @@
                         <img style="width: 35px;" src="../assets/wallet-connect.svg" alt="connect">
                     </div>
                     <p class="textColor--text text-subtitle-1 font-weight-bold pt-8 pb-8">WalletConnect</p>
-                    <v-btn @click="handleUnlock" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
+                    <v-btn @click="handleWalletConnect" class="rounded-lg" large color="btnColor" ><span class="btnTextColor--text">连接</span></v-btn>
                 </div>
             </div>
             <v-btn width="100%" class="rounded-lg" large color="btnColor" @click="handleCancel"><span class="textColor--text">取消</span></v-btn>
@@ -201,7 +201,24 @@ export default {
         var url = "https://hecoinfo.com/address/" + id;
         window.open(url);
        
+      },
+      handleWalletConnect(){
+          helper.walletConnect((account)=>{
+              console.log(account);
+            if(account!="") {
+                this.isLogin = true;
+                this.$store.state.defaultAccount = account[0];
+                this.$store.state.login = true;
+               
+            }
+        },(id)=>{
+            if(id!="") {
+                this.$store.state.defaultChainId = id;    
+            }
+        });
+        this.overlay = false;
       }
+      
     },
     // beforeDestroy () {
     //     if (typeof window === 'undefined') return

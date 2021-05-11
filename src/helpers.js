@@ -8,6 +8,7 @@ import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
 import cd from '../public/d'
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const cbbcFactoryAddress = "0x9cE57A8Ea83F64765d4C558593e2635BBFe5BE06";
 const cbbcRouterAddress = "0x4097d6A81BD705e373697ceeeF4C431166c07Aa2";
@@ -18,7 +19,7 @@ const orchestratorAddress = "0x7C34503320211181f82bcf2e27a011D1735671Fe";
 const priceDataServer = cd.cd;//"http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
 
-let web3 = new Web3(Web3.givenProvider);
+var web3 = new Web3(Web3.givenProvider);
 const cbbcFactoryInstance = new web3.eth.Contract(cbbcFactory.abi, cbbcFactoryAddress);
 const cbbcRouterInstance = new web3.eth.Contract(cbbcRouter.abi, cbbcRouterAddress);
 const liquidityTokenInstance = new web3.eth.Contract(liquidityToken.abi, liquidityTokenAddress);
@@ -40,7 +41,22 @@ window.addEventListener('load', function() {
     }
 });
 
+async function walletConnect(accountHandler,chainIdHandler){
+    const provider = new WalletConnectProvider({
+        infuraId: "27e484dcd9e3efcfd25a83a78777cdf1",
+      });
+    
+      //  Enable session (triggers QR Code modal)
+    await provider.enable();
 
+    web3 = new Web3(provider);
+    const accounts = await web3.eth.getAccounts();
+    
+    //  Get Chain Id
+    const chainId = await web3.eth.getChainId();
+    accountHandler(accounts);
+    chainIdHandler(chainId);
+}
 async function handleChainChanged(id) {
     //TODO: handle tx viewer URL and contract address change.
 }
@@ -71,6 +87,7 @@ function IsWalletInstalled(){
 //argument: string ownerAddress
 async function getETHBalance(ownerAddress,callback) {
     web3.eth.getBalance(ownerAddress, (err, balance) => {
+        console.log(err);
         callback(toEth(balance));
     });
     
@@ -590,6 +607,7 @@ export default {
     settleTokenList,
     tradeTokenList,
     IsWalletInstalled,
+    walletConnect,
     getETHBalance, //获取用户ETH数量
     allowance, //获取授权通证数量
     approveToken,  //授权通证
