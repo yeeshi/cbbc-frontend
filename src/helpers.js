@@ -28,8 +28,7 @@ const settleTokenList = getSettleTokenList();
 const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
-(async () => {    
-    console.log(await getTotalSupply());
+(async () => {        
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
@@ -360,14 +359,33 @@ async function getSettleTokenList() {
 async function getCbbc() {
     if(cbbc.length == 0) { //lazy loading for cbbc
         const cbbcLength = await cbbcFactoryInstance.methods.allCbbcsLength().call();
+
+        let cbbcAddressPromise = [];
         for(let i=0;i<cbbcLength;i++) {
-            let cbbcAddress = await cbbcFactoryInstance.methods.allCbbcs(i).call();
-            let instance = new web3.eth.Contract(cbbcToken.abi, cbbcAddress);
-            let name = await instance.methods.name().call();
-            cbbc.push({
-                name: name,
-                address: cbbcAddress,
-                instance: instance
+            cbbcAddressPromise.push(cbbcFactoryInstance.methods.allCbbcs(i).call());
+        }
+
+        let instances = [];
+        let addresses = [];
+        await Promise.all(cbbcAddressPromise).then(cbbcAddresses => {
+            addresses = cbbcAddresses;
+            for(let i=0;i<cbbcLength;i++) {
+                instances.push(new web3.eth.Contract(cbbcToken.abi, cbbcAddresses[i]));
+            }
+        });
+
+        for(let i=0;i<cbbcLength;i++) {
+            let namePromise = instances[i].methods.name().call();
+            let typePromise = instances[i].methods.cbbcType().call();
+            let cbbcpricePromise = instances[i].methods.currentPrice().call();
+            await Promise.all([namePromise, typePromise, cbbcpricePromise]).then(result => {
+                cbbc.push({
+                    name: result[0],
+                    type: result[1],
+                    cbbcprice: result[2],
+                    address: addresses[i],
+                    instance: instances[i]
+                });
             });
         }
     }
@@ -377,23 +395,28 @@ async function getCbbc() {
 
 
 //arguments: string ownerAddress
-//return: [{string name,int amount}]
+//return: [{string address, string name, int type, int cbbcprice, int amount}]
 async function getPositions(ownerAddress) {
     cbbc = await getCbbc();
     let positions = new Map();
     
+    let amountPromise = [];
     for(let i=0;i<cbbc.length;i++) {
-        let amount = await cbbc[i].instance.methods.balanceOf(ownerAddress).call();
-        let type = await cbbc[i].instance.methods.cbbcType().call();
-        let cbbcprice = await cbbc[i].instance.methods.currentPrice().call();
-        positions.set(cbbc[i].address, {
-            address: cbbc[i].address,
-            name: cbbc[i].name,
-            type: type,
-            cbbcprice: toEth(cbbcprice),
-            amount: toEth(amount)
-        });
+        amountPromise.push(cbbc[i].instance.methods.balanceOf(ownerAddress).call());
     }
+
+    await Promise.all(amountPromise).then(amounts => {
+        for(let i=0;i<cbbc.length;i++) {
+            positions.set(cbbc[i].address, {
+                address: cbbc[i].address,
+                name: cbbc[i].name,
+                type: cbbc[i].type,
+                cbbcprice: toEth(cbbc[i].cbbcprice),
+                amount: toEth(amounts[i])
+            });
+        }
+    });
+    
     return positions;
 }
 
