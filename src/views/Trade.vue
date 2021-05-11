@@ -96,6 +96,7 @@
             </v-card>
           </v-dialog>
         </div>
+      <v-footer></v-footer>
       </div>
     </div>
 </template>
@@ -103,6 +104,7 @@
 <script>
 // @ is an alias to /src
 import vHeader from '@/components/Header.vue'
+import vFooter from '@/components/Footer.vue'
 import helper from "../helpers"
 export default {
   name: 'Home',
@@ -173,7 +175,8 @@ export default {
     }
   },
   components: {
-    vHeader
+    vHeader,
+    vFooter
   },
   computed: {
     isCustomize: function(){
