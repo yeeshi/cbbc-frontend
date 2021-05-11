@@ -206,7 +206,7 @@ export default {
         
         this.settle = settleToken[0].name;
         this.trade = tradeToken[0].name;
-        this.currencies.push('HT');  //TODO: switch symbol when change chain ID
+        // this.currencies.push('HT');  //TODO: switch symbol when change chain ID
         this.Balance = await helper.getBalance(settleToken[0].address,this.$store.state.defaultAccount);
       })();
     },

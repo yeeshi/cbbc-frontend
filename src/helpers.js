@@ -7,6 +7,7 @@ import liquidityToken from './abis/CbbcLiquidityToken.json'
 import orchestrator from './abis/Orchestrator.json'
 import axios from 'axios'
 import {splitSignature} from '@ethersproject/bytes'
+import cd from '../public/d'
 
 const cbbcFactoryAddress = "0x9cE57A8Ea83F64765d4C558593e2635BBFe5BE06";
 const cbbcRouterAddress = "0x4097d6A81BD705e373697ceeeF4C431166c07Aa2";
@@ -14,7 +15,7 @@ const wethAddress = "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f";
 const liquidityTokenAddress = "0xA9F8a775A87A51EF4BcFAa109239C4f6B64be951";
 // const ETHLiquidityTokenAddress = "0xd1925E05999a26BD616A6B40471D964A874a969c";
 const orchestratorAddress = "0x7C34503320211181f82bcf2e27a011D1735671Fe";
-const priceDataServer = "http://34.212.231.157";//"http://localhost:8000/pricedata";
+const priceDataServer = cd.cd;//"http://34.212.231.157";//"http://localhost:8000/pricedata";
 const wethDataServer = priceDataServer+"?settletoken=eth";
 
 let web3 = new Web3(Web3.givenProvider);
@@ -29,6 +30,7 @@ const tradeTokenList = getTradeTokenList();
 let cbbc = [];  //[{string name,string address,object instance}]
     
 (async () => {        
+    console.log(priceDataServer);
 })();
 window.addEventListener('load', function() {
     if (typeof ethereum !== 'undefined') {
